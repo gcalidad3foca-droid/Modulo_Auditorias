@@ -1651,8 +1651,13 @@ async function guardarAuditoria() {
       });
     });
     
+    // Generar ID personalizado: AuditoriaServicio-YYYYMMDD-consecutivo
+    const fechaFormateada = fecha.replace(/-/g, '');
+    const consecutivo = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+    const auditID = `AuditoriaServicio-${fechaFormateada}-${consecutivo}`;
+    
     const payload = {
-      id: crypto.randomUUID(),
+      id: auditID,
       fecha: fecha,
       sede: sede,
       servicio: servicio || "No especificado",
@@ -1674,7 +1679,7 @@ async function guardarAuditoria() {
       body: JSON.stringify(payload)
     });
     
-    showNotification("✅ Auditoría guardada exitosamente en Google Sheets", "success");
+    showNotification(`✅ Auditoría guardada exitosamente - ID: ${auditID}`, "success");
     
     console.log("Auditoría enviada con ID:", payload.id);
     
