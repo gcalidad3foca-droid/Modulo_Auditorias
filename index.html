@@ -468,6 +468,18 @@
     transform: translateY(-3px);
     box-shadow: 0 8px 16px rgba(255, 152, 0, 0.3);
   }
+
+  .btn-save {
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+  }
+  
+  .btn-save:hover {
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(33, 150, 243, 0.3);
+  }
   
   /* Gráficos de Visualización */
   .charts-section {
@@ -598,8 +610,8 @@
         <div class="header-content">
           <div class="logo-section">
             <div class="logo">
-  <img src="https://i.imgur.com/3WZzeT6.png" alt="Logo FOCA">
-</div>
+              <img src="https://i.imgur.com/3WZzeT6.png" alt="Logo FOCA">
+            </div>
             <div class="org-name">FUNDACIÓN OFTALMOLÓGICA DEL CARIBE</div>
           </div>
           <div class="title-section">
@@ -636,6 +648,10 @@
           <div class="meta-field">
             <label>Auditor</label>
             <input type="text" id="auditor" placeholder="Nombre del auditor">
+          </div>
+          <div class="meta-field">
+            <label>Servicio</label>
+            <input type="text" id="servicio" placeholder="Servicio evaluado">
           </div>
         </div>
       </div>
@@ -734,14 +750,14 @@
           Exportar a Excel
         </button>
         
+        <button class="export-btn btn-save" id="save-audit">
+          <i class="fas fa-save"></i>
+          Guardar Auditoría
+        </button>
+        
         <button class="export-btn btn-reset" id="reset-form">
           <i class="fas fa-redo-alt"></i>
           Restablecer Formulario
-        </button>
-
-        <button class="export-btn" onclick="guardarAuditoria()">
-        <i class="fas fa-save"></i>
-         Guardar Auditoría
         </button>
       </div>
     </div>
@@ -984,13 +1000,12 @@ async function exportToPDF() {
     const contentWidth = pageWidth - (margin * 2);
     let yPos = margin;
     
-    // Obtener datos
     const fecha = document.getElementById('fecha').value || 'No especificada';
     const sede = document.getElementById('sede').value || 'No especificada';
     const auditor = document.getElementById('auditor').value || 'No especificado';
+    const servicio = document.getElementById('servicio').value || 'No especificado';
     const { results, finalPct } = computeResults();
     
-    // ===== FUNCIÓN PARA VERIFICAR ESPACIO Y AGREGAR PÁGINA =====
     function checkPageBreak(requiredSpace) {
       if (yPos + requiredSpace > pageHeight - margin) {
         doc.addPage();
@@ -1000,29 +1015,18 @@ async function exportToPDF() {
       return false;
     }
     
-    // ===== ENCABEZADO PRINCIPAL =====
     doc.setFillColor(30, 60, 114);
     doc.rect(0, 0, pageWidth, 65, 'F');
-    
-    // Logo y nombre
     
     doc.setFillColor(255, 255, 255);
     doc.roundedRect(margin, 12, 20, 20, 3, 3, 'F');
     
-    // Agregar logo como imagen
     try {
       const logoImg = document.querySelector('.logo img');
       if (logoImg && logoImg.complete) {
         doc.addImage(logoImg.src, 'PNG', margin + 2, 14, 16, 16);
-      } else {
-        // Fallback si no carga la imagen
-        doc.setTextColor(30, 60, 114);
-        doc.setFontSize(14);
-        doc.setFont('helvetica', 'bold');
-        doc.text('FOCA', margin + 10, 24, { align: 'center' });
       }
     } catch (error) {
-      // Fallback en caso de error
       doc.setTextColor(30, 60, 114);
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
@@ -1034,7 +1038,6 @@ async function exportToPDF() {
     doc.setFont('helvetica', 'bold');
     doc.text('FUNDACIÓN OFTALMOLÓGICA DEL CARIBE', pageWidth / 2, 22, { align: 'center' });
     
-    // Título principal
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.text('LISTA DE VERIFICACIÓN DE AUDITORÍA DE SERVICIO', pageWidth / 2, 38, { align: 'center' });
@@ -1043,7 +1046,6 @@ async function exportToPDF() {
     doc.setFont('helvetica', 'normal');
     doc.text('Sistema de Evaluación y Control de Calidad', pageWidth / 2, 45, { align: 'center' });
     
-    // Información de cabecera
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
     doc.text('Código: ', margin, 56);
@@ -1062,9 +1064,8 @@ async function exportToPDF() {
     
     yPos = 75;
     
-    // ===== INFORMACIÓN DE LA AUDITORÍA =====
     doc.setFillColor(248, 249, 250);
-    doc.rect(margin, yPos, contentWidth, 28, 'F');
+    doc.rect(margin, yPos, contentWidth, 35, 'F');
     
     doc.setTextColor(30, 60, 114);
     doc.setFontSize(9);
@@ -1079,26 +1080,27 @@ async function exportToPDF() {
     doc.setFont('helvetica', 'normal');
     doc.text(sede, margin + 3, yPos + 24);
     
+    doc.setFont('helvetica', 'bold');
+    doc.text('SERVICIO:', margin + 3, yPos + 27);
+    doc.setFont('helvetica', 'normal');
+    doc.text(servicio, margin + 3, yPos + 32);
     
     doc.setFont('helvetica', 'bold');
     doc.text('AUDITOR:', pageWidth / 2 + 5, yPos + 19);
     doc.setFont('helvetica', 'normal');
     doc.text(auditor, pageWidth / 2 + 5, yPos + 24);
     
-    yPos += 35;
+    yPos += 42;
     
-    // ===== LISTA DE VERIFICACIÓN CON AUTOTABLE =====
     doc.setTextColor(30, 60, 114);
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.text('LISTA DE VERIFICACIÓN', margin, yPos);
     yPos += 7;
     
-    // Preparar datos para la tabla
     const tableData = [];
     
     DATA.forEach(section => {
-      // Fila de sección
       tableData.push([{
         content: section.name,
         colSpan: 6,
@@ -1111,7 +1113,6 @@ async function exportToPDF() {
         }
       }]);
       
-      // Ítems de la sección
       section.items.forEach((item, idx) => {
         const radios = document.getElementsByName(makeId(section.name, idx));
         let selectedValue = '';
@@ -1119,7 +1120,6 @@ async function exportToPDF() {
           if (r.checked) selectedValue = r.value;
         }
         
-        // Buscar observación
         const allRows = document.querySelectorAll('#tbody tr');
         let observation = '';
         for (const row of allRows) {
@@ -1141,7 +1141,6 @@ async function exportToPDF() {
         ]);
       });
       
-      // Resultado de la sección
       const resultEl = document.getElementById('result-' + makeId(section.name, 0));
       const resultPct = resultEl ? resultEl.textContent : '0%';
       
@@ -1193,11 +1192,9 @@ async function exportToPDF() {
     
     yPos = doc.lastAutoTable.finalY + 10;
     
-    // ===== NUEVA PÁGINA PARA RESULTADOS =====
     doc.addPage();
     yPos = margin;
     
-    // ===== RESULTADOS POR CRITERIO =====
     doc.setTextColor(30, 60, 114);
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
@@ -1208,7 +1205,6 @@ async function exportToPDF() {
     doc.text('Resultados por Criterio', pageWidth / 2, yPos, { align: 'center' });
     yPos += 10;
     
-    // Tabla de resultados
     const resultsTableData = results.map(result => [
       result.name,
       `${Math.round(result.weight * 100)}%`,
@@ -1243,7 +1239,6 @@ async function exportToPDF() {
     
     yPos = doc.lastAutoTable.finalY + 15;
     
-    // ===== RESULTADO FINAL =====
     const status = legendFor(finalPct);
     let bgColor;
     if (finalPct >= 100) bgColor = [76, 175, 80];
@@ -1269,7 +1264,6 @@ async function exportToPDF() {
     
     yPos += 55;
     
-    // ===== LEYENDA =====
     checkPageBreak(50);
     
     doc.setDrawColor(224, 224, 224);
@@ -1299,7 +1293,6 @@ async function exportToPDF() {
     
     yPos += 58;
     
-    // ===== GRÁFICAS =====
     checkPageBreak(120);
     
     doc.setTextColor(30, 60, 114);
@@ -1309,24 +1302,19 @@ async function exportToPDF() {
     yPos += 10;
     
     try {
-      // Esperar un momento para que los gráficos se rendericen completamente
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Capturar gráfico de categorías con máxima calidad profesional
       const categoryCanvas = document.getElementById('categoryChart');
       if (categoryCanvas) {
-        // Crear canvas temporal con resolución profesional 5K
         const tempCanvas = document.createElement('canvas');
-        const scale = 5; // Factor de escala 5x para calidad profesional
+        const scale = 5;
         tempCanvas.width = categoryCanvas.width * scale;
         tempCanvas.height = categoryCanvas.height * scale;
         const tempCtx = tempCanvas.getContext('2d', { alpha: false });
         
-        // Configuración para máxima calidad
         tempCtx.imageSmoothingEnabled = true;
         tempCtx.imageSmoothingQuality = 'high';
         
-        // Fondo blanco para evitar transparencias
         tempCtx.fillStyle = '#ffffff';
         tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
         
@@ -1341,7 +1329,6 @@ async function exportToPDF() {
         doc.text('Resultados por Categoría', margin, yPos);
         yPos += 5;
         
-        // Gráfica optimizada profesionalmente
         const chartWidth = contentWidth * 0.85;
         const chartHeight = 60;
         const xOffset = (contentWidth - chartWidth) / 2;
@@ -1349,24 +1336,19 @@ async function exportToPDF() {
         yPos += chartHeight + 12;
       }
       
-      // Verificar espacio para segundo gráfico
       checkPageBreak(75);
       
-      // Capturar gráfico de distribución con máxima calidad profesional
       const distributionCanvas = document.getElementById('distributionChart');
       if (distributionCanvas) {
-        // Crear canvas temporal con resolución profesional 5K
         const tempCanvas = document.createElement('canvas');
-        const scale = 5; // Factor de escala 5x para calidad profesional
+        const scale = 5;
         tempCanvas.width = distributionCanvas.width * scale;
         tempCanvas.height = distributionCanvas.height * scale;
         const tempCtx = tempCanvas.getContext('2d', { alpha: false });
         
-        // Configuración para máxima calidad
         tempCtx.imageSmoothingEnabled = true;
         tempCtx.imageSmoothingQuality = 'high';
         
-        // Fondo blanco para evitar transparencias
         tempCtx.fillStyle = '#ffffff';
         tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
         
@@ -1381,7 +1363,6 @@ async function exportToPDF() {
         doc.text('Distribución de Evaluaciones', margin, yPos);
         yPos += 5;
         
-        // Gráfica optimizada profesionalmente
         const chartWidth = contentWidth * 0.85;
         const chartHeight = 60;
         const xOffset = (contentWidth - chartWidth) / 2;
@@ -1395,7 +1376,6 @@ async function exportToPDF() {
       doc.text('(Las gráficas no pudieron ser generadas)', margin, yPos);
     }
     
-    // ===== PIE DE PÁGINA EN TODAS LAS PÁGINAS =====
     const pageCount = doc.internal.getNumberOfPages();
     doc.setFontSize(8);
     doc.setTextColor(128, 128, 128);
@@ -1407,11 +1387,10 @@ async function exportToPDF() {
       doc.text(`Generado: ${new Date().toLocaleDateString('es-CO')}`, pageWidth - margin, pageHeight - 10, { align: 'right' });
     }
     
-    // ===== GUARDAR PDF =====
     const fileName = `Auditoria_Servicio_${fecha.replace(/-/g, '')}_${sede.replace(/\s+/g, '_')}.pdf`;
     doc.save(fileName);
     
-    showNotification('PDF exportado exitosamente con texto seleccionable', 'success');
+    showNotification('PDF exportado exitosamente', 'success');
   } catch (error) {
     console.error('Error al exportar PDF:', error);
     showNotification('Error al exportar PDF: ' + error.message, 'error');
@@ -1421,7 +1400,7 @@ async function exportToPDF() {
 // ==================== EXPORTACIÓN A EXCEL ====================
 async function exportToExcel() {
   try {
-    showNotification('Generando archivo Excel profesional...', 'info');
+    showNotification('Generando archivo Excel...', 'info');
     
     const fecha = document.getElementById('fecha').value || 'No especificada';
     const sede = document.getElementById('sede').value || 'No especificada';
@@ -1567,17 +1546,6 @@ async function exportToExcel() {
       allData.push(['No Aplica (N/A)', 0, '0%']);
     }
     
-    allData.push([]);
-    allData.push([]);
-    
-    allData.push([{v: 'VISUALIZACIÓN DE RESULTADOS', s: {font: {bold: true, sz: 12, color: {rgb: "FFFFFF"}}, fill: {fgColor: {rgb: "1E3C72"}}, alignment: {horizontal: 'center'}}}]);
-    allData.push([]);
-    allData.push(['GRÁFICO 1: Resultados por Categoría']);
-    allData.push(['Nota: Los gráficos interactivos se visualizan mejor en la versión HTML o PDF']);
-    allData.push([]);
-    allData.push(['GRÁFICO 2: Distribución de Evaluaciones']);
-    allData.push(['Nota: Para una experiencia visual completa, consulte el archivo HTML o PDF']);
-    
     const ws = XLSX.utils.aoa_to_sheet(allData);
     
     ws['!cols'] = [
@@ -1598,7 +1566,7 @@ async function exportToExcel() {
     const fileName = `Auditoria_FOCA_${fecha.replace(/-/g, '')}_${sede.replace(/\s+/g, '_')}.xlsx`;
     XLSX.writeFile(wb, fileName);
     
-    showNotification('Archivo Excel exportado exitosamente con formato profesional', 'success');
+    showNotification('Archivo Excel exportado exitosamente', 'success');
   } catch (error) {
     console.error('Error al exportar Excel:', error);
     showNotification('Error al exportar Excel: ' + error.message, 'error');
@@ -1640,19 +1608,94 @@ function resetForm() {
   }
 }
 
+// ==================== GUARDAR EN GOOGLE SHEETS ====================
+async function guardarAuditoria() {
+  try {
+    showNotification('Guardando auditoría en Google Sheets...', 'info');
+    
+    const resultado = computeResults();
+    
+    const fecha = document.getElementById("fecha").value;
+    const sede = document.getElementById("sede").value;
+    const auditor = document.getElementById("auditor").value;
+    const servicio = document.getElementById("servicio").value;
+    
+    if (!fecha || !sede || !auditor) {
+      showNotification("Por favor complete los campos: Fecha, Sede y Auditor", "error");
+      return;
+    }
+    
+    const items = [];
+    DATA.forEach(section => {
+      section.items.forEach((item, idx) => {
+        const radios = document.getElementsByName(makeId(section.name, idx));
+        let valor = "";
+        
+        radios.forEach(r => {
+          if (r.checked) valor = r.value;
+        });
+        
+        let observacion = "";
+        if (radios.length > 0) {
+          const fila = radios[0].closest("tr");
+          const obsInput = fila ? fila.querySelector(".obs-input") : null;
+          if (obsInput) observacion = obsInput.value;
+        }
+        
+        items.push({
+          categoria: section.name,
+          item: item,
+          resultado: valor || "Sin evaluar",
+          observacion: observacion
+        });
+      });
+    });
+    
+    const payload = {
+      id: crypto.randomUUID(),
+      fecha: fecha,
+      sede: sede,
+      servicio: servicio || "No especificado",
+      auditor: auditor,
+      porcentaje_final: resultado.finalPct,
+      estado: legendFor(resultado.finalPct),
+      timestamp: new Date().toISOString(),
+      items: items
+    };
+    
+    console.log("Enviando payload:", payload);
+    
+    const response = await fetch("https://script.google.com/macros/s/AKfycby9YVrSoK38cY8z8zOB-dnzrFdgbsQwWbAIQnMtyQS1TH-7PQ7CLEbV63GKK633Gl-_OQ/exec", {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+    
+    showNotification("✅ Auditoría guardada exitosamente en Google Sheets", "success");
+    
+    console.log("Auditoría enviada con ID:", payload.id);
+    
+  } catch (error) {
+    console.error("Error detallado al guardar:", error);
+    showNotification("❌ Error al guardar: " + error.message, "error");
+  }
+}
+
 // ==================== GRÁFICOS ====================
 function initializeCharts() {
   const ctx1 = document.getElementById('categoryChart').getContext('2d');
   const ctx2 = document.getElementById('distributionChart').getContext('2d');
   
-  // Gama de colores azules
   const categoryColors = [
-    'rgba(30, 60, 114, 0.9)',      // Azul oscuro
-    'rgba(42, 82, 152, 0.9)',      // Azul medio oscuro
-    'rgba(33, 150, 243, 0.9)',     // Azul medio
-    'rgba(66, 165, 245, 0.9)',     // Azul claro
-    'rgba(100, 181, 246, 0.9)',    // Azul muy claro
-    'rgba(144, 202, 249, 0.9)'     // Azul pálido
+    'rgba(30, 60, 114, 0.9)',
+    'rgba(42, 82, 152, 0.9)',
+    'rgba(33, 150, 243, 0.9)',
+    'rgba(66, 165, 245, 0.9)',
+    'rgba(100, 181, 246, 0.9)',
+    'rgba(144, 202, 249, 0.9)'
   ];
   
   categoryChart = new Chart(ctx1, {
@@ -1678,18 +1721,6 @@ function initializeCharts() {
             label: function(context) {
               return `${context.label}: ${context.raw}%`;
             }
-          }
-        },
-        datalabels: {
-          anchor: 'end',
-          align: 'top',
-          formatter: function(value) {
-            return value + '%';
-          },
-          color: '#1e3c72',
-          font: {
-            weight: 'bold',
-            size: 12
           }
         }
       },
@@ -1730,7 +1761,6 @@ function initializeCharts() {
             meta.data.forEach(function(element, index) {
               const value = dataset.data[index];
               
-              // Solo mostrar si hay valor
               if (value > 0) {
                 ctx.fillStyle = '#1e3c72';
                 const fontSize = 12;
@@ -1742,7 +1772,7 @@ function initializeCharts() {
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'bottom';
                 
-                const padding = value >= 100 ? 8 : 5; // Más espacio si es 100%
+                const padding = value >= 100 ? 8 : 5;
                 const position = element.tooltipPosition();
                 ctx.fillText(dataString, position.x, position.y - padding);
               }
@@ -1760,10 +1790,10 @@ function initializeCharts() {
       datasets: [{
         data: [0, 0, 0, 0],
         backgroundColor: [
-          'rgba(33, 150, 243, 0.9)',   // Azul brillante
-          'rgba(66, 165, 245, 0.9)',   // Azul medio claro
-          'rgba(100, 181, 246, 0.9)',  // Azul claro
-          'rgba(144, 202, 249, 0.9)'   // Azul muy claro
+          'rgba(33, 150, 243, 0.9)',
+          'rgba(66, 165, 245, 0.9)',
+          'rgba(100, 181, 246, 0.9)',
+          'rgba(144, 202, 249, 0.9)'
         ],
         borderColor: [
           'rgba(33, 150, 243, 1)',
@@ -1813,7 +1843,6 @@ function initializeCharts() {
               const percentage = total > 0 ? Math.round((data / total) * 100) : 0;
               
               if (percentage > 0) {
-                // Texto blanco con sombra para mejor legibilidad
                 ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
                 ctx.shadowBlur = 4;
                 ctx.shadowOffsetX = 1;
@@ -1832,10 +1861,8 @@ function initializeCharts() {
                 
                 const position = element.tooltipPosition();
                 
-                // Dibujar texto con sombra
                 ctx.fillText(dataString, position.x, position.y);
                 
-                // Resetear sombra
                 ctx.shadowColor = 'transparent';
                 ctx.shadowBlur = 0;
                 ctx.shadowOffsetX = 0;
@@ -1889,6 +1916,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   document.getElementById('export-pdf').addEventListener('click', exportToPDF);
   document.getElementById('export-excel').addEventListener('click', exportToExcel);
+  document.getElementById('save-audit').addEventListener('click', guardarAuditoria);
   document.getElementById('reset-form').addEventListener('click', resetForm);
   
   document.body.addEventListener('change', function(e) { 
@@ -1902,49 +1930,6 @@ document.addEventListener('DOMContentLoaded', function() {
     input.addEventListener('change', computeResults);
   });
 });
-
-function guardarAuditoria() {
-
-  const resultado = computeResults();
-
-  const payload = {
-    id: crypto.randomUUID(),
-    fecha: document.getElementById("fecha").value,
-    sede: document.getElementById("sede").value,
-    servicio: document.getElementById("servicio").value,
-    auditor: document.getElementById("auditor").value,
-    porcentaje_final: resultado.finalPct,
-    estado: legendFor(resultado.finalPct),
-    items: []
-  };
-
-  DATA.forEach(section => {
-    section.items.forEach((item, idx) => {
-
-      const radios = document.getElementsByName(makeId(section.name, idx));
-      let valor = "";
-
-      radios.forEach(r => r.checked && (valor = r.value));
-
-      const fila = radios[0].closest("tr");
-      const observacion = fila.querySelector(".obs-input").value;
-
-      payload.items.push({
-        categoria: section.name,
-        item,
-        resultado: valor,
-        observacion
-      });
-    });
-  });
-
-  fetch("https://script.google.com/macros/s/AKfycby9YVrSoK38cY8z8zOB-dnzrFdgbsQwWbAIQnMtyQS1TH-7PQ7CLEbV63GKK633Gl-_OQ/exec", {
-    method: "POST",
-    body: JSON.stringify(payload)
-  })
-  .then(() => showNotification("Auditoría guardada en la base de datos"))
-  .catch(() => showNotification("Error al guardar auditoría", "error"));
-}
 
 </script>
 
