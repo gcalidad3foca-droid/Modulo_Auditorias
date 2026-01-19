@@ -660,7 +660,6 @@
               <option value="">Seleccione el auditor</option>
               <option value="Luis Angel Bolaño Castro">Luis Angel Bolaño Castro</option>
               <option value="Maria Clara Pizarro">Maria Clara Pizarro</option>
-              <option value="Jennifer Melendez">Jennifer Melendez</option>
               <option value="Daniel Rodriguez Galofre">Daniel Rodriguez Galofre</option>
               <option value="Valentina Jimeno">Valentina Jimeno</option>
             </select>
@@ -710,19 +709,15 @@
           <div class="legend-box">
             <div class="legend-item">
               <div class="legend-dot" style="background: #4caf50;"></div>
-              <div class="legend-text"><strong>100%</strong> – Cumplimiento total, no requiere acción</div>
-            </div>
-            <div class="legend-item">
-              <div class="legend-dot" style="background: #8bc34a;"></div>
-              <div class="legend-text"><strong>80% - 99%</strong> – Riesgo Bajo, requiere seguimiento</div>
+              <div class="legend-text"><strong>Mayor o igual a 90%</strong> – Riesgo Bajo. Cumple. Genera seguimiento. No genera plan de acción</div>
             </div>
             <div class="legend-item">
               <div class="legend-dot" style="background: #ff9800;"></div>
-              <div class="legend-text"><strong>60% - 79%</strong> – Riesgo Medio, requiere plan de acción</div>
+              <div class="legend-text"><strong>Mayor o igual a 85%</strong> – Riesgo Medio. Cumple parcialmente con los criterios evaluados</div>
             </div>
             <div class="legend-item">
               <div class="legend-dot" style="background: #f44336;"></div>
-              <div class="legend-text"><strong>0% - 59%</strong> – Riesgo Alto, intervención inmediata</div>
+              <div class="legend-text"><strong>Menor de 85%</strong> – Riesgo Alto. Se requiere acciones de intervención inmediata y plan de mejoramiento a corto plazo</div>
             </div>
           </div>
         </div>
@@ -950,11 +945,9 @@ function computeResults() {
   document.getElementById('final-status').textContent = legendFor(finalPct);
   
   const finalScore = document.querySelector('.final-score');
-  if (finalPct >= 100) {
+  if (finalPct >= 90) {
     finalScore.style.background = 'linear-gradient(135deg, #4caf50 0%, #66bb6a 100%)';
-  } else if (finalPct >= 80) {
-    finalScore.style.background = 'linear-gradient(135deg, #8bc34a 0%, #9ccc65 100%)';
-  } else if (finalPct >= 60) {
+  } else if (finalPct >= 85) {
     finalScore.style.background = 'linear-gradient(135deg, #ff9800 0%, #ffa726 100%)';
   } else {
     finalScore.style.background = 'linear-gradient(135deg, #f44336 0%, #ef5350 100%)';
@@ -966,9 +959,8 @@ function computeResults() {
 }
 
 function legendFor(pct) {
-  if (pct >= 100) return 'Cumplimiento Total';
-  if (pct >= 80) return 'Riesgo Bajo';
-  if (pct >= 60) return 'Riesgo Medio';
+  if (pct >= 90) return 'Riesgo Bajo';
+  if (pct >= 85) return 'Riesgo Medio';
   return 'Riesgo Alto';
 }
 
@@ -993,9 +985,6 @@ function showNotification(message, type = 'success') {
   }, 3000);
 }
 
-// ==================== EXPORTACIÓN A PDF ====================
-// Considera usar jsPDF-AutoTable para las gráficas también
-// o asegúrate de que las gráficas estén completamente renderizadas antes de capturar.
 async function exportToPDF() {
   try {
     showNotification('Generando PDF', 'info');
@@ -1244,9 +1233,8 @@ async function exportToPDF() {
     
     const status = legendFor(finalPct);
     let bgColor;
-    if (finalPct >= 100) bgColor = [76, 175, 80];
-    else if (finalPct >= 80) bgColor = [139, 195, 74];
-    else if (finalPct >= 60) bgColor = [255, 152, 0];
+    if (finalPct >= 90) bgColor = [76, 175, 80];
+    else if (finalPct >= 85) bgColor = [255, 152, 0];
     else bgColor = [244, 67, 54];
     
     checkPageBreak(55);
@@ -1271,21 +1259,20 @@ async function exportToPDF() {
     
     doc.setDrawColor(224, 224, 224);
     doc.setFillColor(255, 255, 255);
-    doc.roundedRect(margin + 10, yPos, contentWidth - 20, 48, 3, 3, 'FD');
+    doc.roundedRect(margin + 10, yPos, contentWidth - 20, 38, 3, 3, 'FD');
     
     doc.setTextColor(44, 62, 80);
-    doc.setFontSize(8);
+    doc.setFontSize(7.5);
     doc.setFont('helvetica', 'normal');
     
     const legendItems = [
-      { color: [76, 175, 80], text: '100% – Cumplimiento total, no requiere acción' },
-      { color: [139, 195, 74], text: '80% - 99% – Riesgo Bajo, requiere seguimiento' },
-      { color: [255, 152, 0], text: '60% - 79% – Riesgo Medio, requiere plan de acción' },
-      { color: [244, 67, 54], text: '0% - 59% – Riesgo Alto, intervención inmediata' }
+      { color: [76, 175, 80], text: 'Mayor o igual a 90% - Riesgo Bajo. Cumple' },
+      { color: [255, 152, 0], text: 'Mayor o igual a 85% - Riesgo Medio. Cumple parcialmente' },
+      { color: [244, 67, 54], text: 'Menor de 85% - Riesgo Alto. Intervencion inmediata' }
     ];
     
     legendItems.forEach((item, index) => {
-      const legendY = yPos + 10 + (index * 10);
+      const legendY = yPos + 12 + (index * 10);
       
       doc.setFillColor(item.color[0], item.color[1], item.color[2]);
       doc.circle(margin + 15, legendY - 1, 2, 'F');
@@ -1294,7 +1281,7 @@ async function exportToPDF() {
       doc.text(item.text, margin + 20, legendY);
     });
     
-    yPos += 58;
+    yPos += 48;
     
     checkPageBreak(120);
     
@@ -1304,13 +1291,11 @@ async function exportToPDF() {
     doc.text('VISUALIZACIÓN DE RESULTADOS', pageWidth / 2, yPos, { align: 'center' });
     yPos += 10;
     
-    // Asegurar que las gráficas estén completamente renderizadas antes de capturar
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
       
       const categoryCanvas = document.getElementById('categoryChart');
       if (categoryCanvas && categoryChart) {
-        // Forzar actualización del gráfico antes de capturar
         categoryChart.update('none');
         await new Promise(resolve => setTimeout(resolve, 100));
         
@@ -1348,7 +1333,6 @@ async function exportToPDF() {
       
       const distributionCanvas = document.getElementById('distributionChart');
       if (distributionCanvas && distributionChart) {
-        // Forzar actualización del gráfico antes de capturar
         distributionChart.update('none');
         await new Promise(resolve => setTimeout(resolve, 100));
         
@@ -1409,7 +1393,6 @@ async function exportToPDF() {
   }
 }
 
-// ==================== RESTABLECER FORMULARIO ====================
 function resetForm() {
   if (!confirm('¿Estás seguro de que deseas restablecer el formulario? Se perderán todos los datos ingresados.')) {
     return;
@@ -1443,7 +1426,6 @@ function resetForm() {
   }
 }
 
-// ==================== GUARDAR EN GOOGLE SHEETS ====================
 async function guardarAuditoria() {
   try {
     showNotification('Guardando auditoría en Google Sheets...', 'info');
@@ -1485,7 +1467,6 @@ async function guardarAuditoria() {
       });
     });
     
-    // Generar ID personalizado: AuditoriaServicio-YYYYMMDD-consecutivo
     const fechaFormateada = fecha.replace(/-/g, '');
     const consecutivo = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
     const auditID = `AuditoriaServicio-${fechaFormateada}-${consecutivo}`;
@@ -1512,22 +1493,20 @@ async function guardarAuditoria() {
       body: JSON.stringify(payload)
     });
     
-    showNotification(`âœ… AuditorÃ­a guardada exitosamente - ID: ${auditID}`, "success");
+    showNotification(`✔ Auditoría guardada exitosamente - ID: ${auditID}`, "success");
     
-    console.log("AuditorÃ­a enviada con ID:", payload.id);
+    console.log("Auditoría enviada con ID:", payload.id);
     
   } catch (error) {
     console.error("Error detallado al guardar:", error);
-    showNotification("âŒ Error al guardar: " + error.message, "error");
+    showNotification("❌ Error al guardar: " + error.message, "error");
   }
 }
 
-// ==================== GRÃFICOS ====================
 function initializeCharts() {
   const ctx1 = document.getElementById('categoryChart').getContext('2d');
   const ctx2 = document.getElementById('distributionChart').getContext('2d');
-  
-  const categoryColors = [
+const categoryColors = [
     'rgba(30, 60, 114, 0.9)',
     'rgba(42, 82, 152, 0.9)',
     'rgba(33, 150, 243, 0.9)',
