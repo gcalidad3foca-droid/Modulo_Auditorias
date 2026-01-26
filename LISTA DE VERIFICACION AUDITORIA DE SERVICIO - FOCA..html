@@ -621,7 +621,7 @@
             </div>
             <div class="header-item">
               <div class="header-label">Vigencia</div>
-              <div class="header-value">2025-19-01</div>
+              <div class="header-value">2026-19-01</div>
             </div>
           </div>
         </div>
@@ -915,7 +915,15 @@ function computeResults() {
       const radios = document.getElementsByName(makeId(section.name, idx));
       let chosen = null;
       for (const r of radios) if (r.checked) chosen = r.value;
-      if (chosen && chosen !== 'NA') { sum += SCORE[chosen]; n += 1; }
+      if (chosen) {
+        if (chosen === 'NA') {
+          sum += 1; // N/A cuenta como 100%
+          n += 1;
+        } else {
+          sum += SCORE[chosen];
+          n += 1;
+        }
+      }
     });
     const pct = n > 0 ? Math.round((sum / n) * 100) : 0;
     const el = document.getElementById('result-' + nameId);
@@ -1058,7 +1066,7 @@ async function exportToPDF() {
     doc.setFont('helvetica', 'bold');
     doc.text('Vigencia: ', pageWidth - 45, 56);
     doc.setFont('helvetica', 'normal');
-    doc.text('2025-19-01', pageWidth - 25, 56);
+    doc.text('2026-19-01', pageWidth - 25, 56);
     
     yPos = 75;
     
