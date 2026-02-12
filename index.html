@@ -2,243 +2,495 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Sistema de Auditoría - FOCA</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Qualisig - Módulo de Auditorías</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+  }
+  
+  html, body {
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
   
   body { 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
+    background: linear-gradient(135deg, #0a1628 0%, #1e3c72 50%, #2a5298 100%);
     position: relative;
-    overflow-x: hidden;
   }
   
-  body::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-  }
-  
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  @keyframes scaleIn {
-    from {
-      opacity: 0;
-      transform: scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-  
-  .container {
-    max-width: 1200px;
+  /* Efecto de profundidad con partículas sutiles */
+  .background-effect {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 15% 20%, rgba(91, 140, 214, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 85% 80%, rgba(134, 197, 218, 0.12) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  /* CONTENEDOR PRINCIPAL - PANTALLA COMPLETA */
+  .main-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
     position: relative;
     z-index: 1;
-    animation: fadeInUp 0.8s ease;
   }
   
-  .header-section {
-    background: white;
-    border-radius: 20px 20px 0 0;
-    padding: 40px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-    text-align: center;
+  /* ============================================
+     HEADER ÉPICO - ESTILO STEVE JOBS
+     ============================================ */
+  .header {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(91, 140, 214, 0.1);
+    padding: 0 5%;
+    height: 70px;
+    display: flex;
+    align-items: center;
     position: relative;
-    overflow: hidden;
+    box-shadow: 0 1px 40px rgba(0, 0, 0, 0.08);
+    flex-shrink: 0;
   }
   
-  .header-section::before {
+  /* Barra superior azul premium con toque de turquesa */
+  .header::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 5px;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+    height: 3px;
+    background: linear-gradient(90deg, 
+      #5B8CD6 0%, 
+      #86C5DA 25%, 
+      #4DD0E1 50%, 
+      #86C5DA 75%, 
+      #5B8CD6 100%);
     background-size: 200% 100%;
-    animation: gradient 3s ease infinite;
+    animation: shimmerTop 8s linear infinite;
   }
   
-  @keyframes gradient {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+  @keyframes shimmerTop {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
   }
   
-  .logo-container {
-    margin: 0 auto 25px;
-    width: 100px;
-    height: 100px;
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-    border-radius: 20px;
+  .header-content {
+    width: 100%;
+    max-width: 1800px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+  }
+  
+  .logo-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .logo {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #5B8CD6 0%, #4976c7 100%);
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 8px 24px rgba(30, 60, 114, 0.3);
-    padding: 15px;
+    box-shadow: 0 8px 25px rgba(91, 140, 214, 0.35);
+    position: relative;
+    overflow: hidden;
   }
   
-  .logo-container img {
-    width: 100%;
-    height: 100%;
+  .logo::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+    animation: logoGlow 3s infinite;
+  }
+  
+  @keyframes logoGlow {
+    0%, 100% { transform: rotate(0deg) translate(-100%, -100%); }
+    50% { transform: rotate(180deg) translate(0%, 0%); }
+  }
+  
+  .logo img {
+    width: 30px;
+    height: 30px;
     object-fit: contain;
+    position: relative;
+    z-index: 1;
+    filter: brightness(0) invert(1);
   }
   
-  .org-title {
-    font-size: 24px;
-    font-weight: 700;
-    color: #1e3c72;
-    margin-bottom: 10px;
-    line-height: 1.3;
+  .brand-text {
+    display: flex;
+    flex-direction: column;
   }
   
-  .org-subtitle {
-    font-size: 16px;
-    color: #666;
-    margin-bottom: 30px;
-  }
-  
-  .main-title {
-    font-size: 32px;
+  .brand-name {
+    font-size: 26px;
     font-weight: 800;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 15px;
   }
   
-  .subtitle {
-    font-size: 18px;
-    color: #666;
-    font-weight: 400;
-  }
-  
-  .cards-section {
-    background: white;
-    padding: 50px 40px;
-    border-radius: 0 0 20px 20px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-  }
-  
-  .section-title {
-    text-align: center;
-    font-size: 15px;
-    font-weight: 600;
-    color: rgba(30, 60, 114, 0.7);
-    margin-bottom: 50px;
+  .brand-tagline {
+    font-size: 10px;
+    color: #718096;
+    font-weight: 500;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
-    letter-spacing: 3px;
+    margin-top: -2px;
+  }
+  
+  /* Separador vertical */
+  .divider {
+    width: 1px;
+    height: 35px;
+    background: linear-gradient(to bottom, transparent, #cbd5e0, transparent);
+    margin: 0 10px;
+  }
+  
+  .nav-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .nav-badge {
+    background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+    border: 1.5px solid #c7d2fe;
+    padding: 8px 18px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .nav-badge i {
+    color: #5B8CD6;
+    font-size: 16px;
+  }
+  
+  .nav-badge-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2d3748;
+  }
+  
+  /* ============================================
+     SECCIÓN PRINCIPAL - PANTALLA COMPLETA
+     ============================================ */
+  .main-content {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 0;
+    overflow: hidden;
+    min-height: 0;
+  }
+  
+  /* PANEL LATERAL IZQUIERDO */
+  .sidebar {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(91, 140, 214, 0.15);
+    padding: 30px 25px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 30px rgba(0, 0, 0, 0.05);
+    overflow-y: auto;
+  }
+  
+  .sidebar-header {
+    margin-bottom: 25px;
+  }
+  
+  .sidebar-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #5B8CD6;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .sidebar-title::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    background: #5B8CD6;
+    border-radius: 50%;
+  }
+  
+  .sidebar-subtitle {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a202c;
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+  
+  .sidebar-description {
+    font-size: 12px;
+    color: #718096;
+    line-height: 1.5;
+    font-weight: 500;
+  }
+  
+  .sidebar-divider {
+    height: 1px;
+    background: linear-gradient(to right, #cbd5e0, transparent);
+    margin: 20px 0;
+  }
+  
+  .sidebar-info {
+    flex: 1;
+  }
+  
+  .info-item {
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+  }
+  
+  .info-item:hover {
+    transform: translateX(5px);
+    border-color: #5B8CD6;
+    box-shadow: 0 5px 20px rgba(91, 140, 214, 0.15);
+  }
+  
+  .info-item-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  
+  .info-icon {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(135deg, #5B8CD6 0%, #4976c7 100%);
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  
+  .info-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2d3748;
+  }
+  
+  .info-description {
+    font-size: 11px;
+    color: #718096;
+    line-height: 1.4;
+    padding-left: 40px;
+  }
+  
+  /* ÁREA DE CONTENIDO PRINCIPAL - EXPANSIVA */
+  .content-area {
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    padding: 30px 40px;
+    overflow-y: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .content-header {
+    text-align: center;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+  }
+  
+  .content-supertitle {
+    font-size: 11px;
+    font-weight: 700;
+    color: #86C5DA;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    margin-bottom: 8px;
+  }
+  
+  .content-title {
+    font-size: 34px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0;
+    letter-spacing: -1px;
+  }
+  
+  .content-subtitle {
+    display: none;
+  }
+  
+  /* GRID DE TARJETAS - EXPANSIVO */
+  .cards-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
   }
   
   .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 500px));
     gap: 30px;
-    margin-bottom: 40px;
+    width: 100%;
+    align-items: start;
   }
   
+  /* TARJETAS PREMIUM - COMPACTAS Y VISIBLES */
   .audit-card {
     background: white;
-    border-radius: 24px;
-    padding: 50px 40px;
+    border-radius: 18px;
+    padding: 25px 28px;
+    border: 2px solid #e2e8f0;
     cursor: pointer;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 3px solid transparent;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     position: relative;
     overflow: hidden;
-    animation: scaleIn 0.5s ease;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
   }
   
   .audit-card::before {
     content: '';
     position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 18px;
+    padding: 2px;
+    background: linear-gradient(135deg, transparent, transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  
+  /* Acento de color sutil en la parte superior de cada tarjeta */
+  .audit-card::after {
+    content: '';
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    bottom: 0;
+    height: 4px;
     opacity: 0;
     transition: opacity 0.5s ease;
-    pointer-events: none;
   }
   
-  .audit-card:nth-child(1)::before {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+  /* FOCA - Azul profundo con toque violeta */
+  .audit-card.foca::before {
+    background: linear-gradient(135deg, #5B8CD6 0%, #7B68EE 100%);
   }
   
-  .audit-card:nth-child(2)::before {
-    background: linear-gradient(135deg, rgba(74, 144, 226, 0.08) 0%, rgba(53, 122, 189, 0.08) 100%);
+  .audit-card.foca::after {
+    background: linear-gradient(90deg, #5B8CD6 0%, #7B68EE 100%);
   }
   
-  .audit-card:hover {
-    transform: translateY(-15px) scale(1.03);
-    box-shadow: 0 30px 60px rgba(102, 126, 234, 0.25);
+  .audit-card.foca:hover {
+    transform: translateY(-10px) scale(1.02);
+    border-color: #5B8CD6;
+    box-shadow: 
+      0 25px 60px rgba(91, 140, 214, 0.25),
+      0 0 0 1px rgba(91, 140, 214, 0.1) inset;
   }
   
-  .audit-card:nth-child(1):hover {
-    border-color: #667eea;
-  }
-  
-  .audit-card:nth-child(2):hover {
-    border-color: #4A90E2;
-  }
-  
-  .audit-card:hover::before {
+  .audit-card.foca:hover::before,
+  .audit-card.foca:hover::after {
     opacity: 1;
   }
   
-  .audit-card:active {
-    transform: translateY(-8px) scale(0.99);
+  /* VIU - Azul claro con toque turquesa */
+  .audit-card.viu::before {
+    background: linear-gradient(135deg, #86C5DA 0%, #4DD0E1 100%);
+  }
+  
+  .audit-card.viu::after {
+    background: linear-gradient(90deg, #86C5DA 0%, #4DD0E1 100%);
+  }
+  
+  .audit-card.viu:hover {
+    transform: translateY(-10px) scale(1.02);
+    border-color: #86C5DA;
+    box-shadow: 
+      0 25px 60px rgba(134, 197, 218, 0.25),
+      0 0 0 1px rgba(134, 197, 218, 0.1) inset;
+  }
+  
+  .audit-card.viu:hover::before,
+  .audit-card.viu:hover::after {
+    opacity: 1;
+  }
+  
+  .card-header {
+    text-align: center;
+    margin-bottom: 20px;
   }
   
   .card-icon {
-    width: 90px;
-    height: 90px;
+    width: 65px;
+    height: 65px;
+    margin: 0 auto 16px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 30px;
-    font-size: 40px;
+    font-size: 30px;
     color: white;
-    transition: all 0.5s ease;
     position: relative;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   
   .card-icon::after {
     content: '';
     position: absolute;
-    width: 110px;
-    height: 110px;
+    width: 85px;
+    height: 85px;
     border-radius: 50%;
     border: 3px solid;
     opacity: 0;
@@ -246,81 +498,134 @@
   }
   
   .audit-card:hover .card-icon {
-    transform: scale(1.15) rotateY(360deg);
+    transform: scale(1.1) rotate(5deg);
   }
   
   .audit-card:hover .card-icon::after {
-    opacity: 0.3;
-    transform: scale(1.2);
+    opacity: 0.2;
+    transform: scale(1.3);
   }
   
-  .card-icon.service {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+  .card-icon.foca {
+    background: linear-gradient(135deg, #5B8CD6 0%, #7B68EE 100%);
+    box-shadow: 0 15px 40px rgba(91, 140, 214, 0.4);
   }
   
-  .card-icon.service::after {
-    border-color: #667eea;
+  .card-icon.foca::after {
+    border-color: #5B8CD6;
   }
   
-  .card-icon.clinical {
-    background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
-    box-shadow: 0 15px 35px rgba(74, 144, 226, 0.4);
+  .card-icon.viu {
+    background: linear-gradient(135deg, #86C5DA 0%, #4DD0E1 100%);
+    box-shadow: 0 15px 40px rgba(134, 197, 218, 0.4);
   }
   
-  .card-icon.clinical::after {
-    border-color: #4A90E2;
+  .card-icon.viu::after {
+    border-color: #86C5DA;
   }
   
   .card-title {
-    font-size: 42px;
+    font-size: 46px;
     font-weight: 900;
-    text-align: center;
-    margin-bottom: 15px;
-    letter-spacing: -1px;
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    letter-spacing: -1.5px;
+    margin-bottom: 10px;
+  }
+  
+  .card-title.foca {
+    background: linear-gradient(135deg, #5B8CD6 0%, #7B68EE 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .card-title.viu {
+    background: linear-gradient(135deg, #86C5DA 0%, #4DD0E1 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   
   .card-description {
-    font-size: 16px;
-    color: #666;
-    line-height: 1.5;
-    text-align: center;
-    margin-bottom: 10px;
+    font-size: 13px;
+    color: #718096;
+    font-weight: 500;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  
+  .card-label {
+    display: inline-block;
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    border: 1px solid #e2e8f0;
+    padding: 5px 12px;
+    border-radius: 7px;
+    font-size: 9px;
+    font-weight: 700;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 20px;
+  }
+  
+  .card-body {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 18px;
+  }
+  
+  .card-features {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 11.5px;
+    color: #4a5568;
     font-weight: 500;
   }
   
-  .card-subtitle {
-    font-size: 11px;
-    color: #999;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-bottom: 35px;
-    font-weight: 600;
+  .feature-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: white;
+    flex-shrink: 0;
+  }
+  
+  .feature-icon.foca {
+    background: linear-gradient(135deg, #5B8CD6 0%, #7B68EE 100%);
+  }
+  
+  .feature-icon.viu {
+    background: linear-gradient(135deg, #86C5DA 0%, #4DD0E1 100%);
   }
   
   .card-button {
     width: 100%;
-    padding: 18px;
+    padding: 14px;
     border: none;
-    border-radius: 50px;
-    font-size: 17px;
+    border-radius: 11px;
+    font-size: 12px;
     font-weight: 700;
     color: white;
     cursor: pointer;
-    transition: all 0.4s ease;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.3px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 8px;
     position: relative;
     overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   
   .card-button::before {
@@ -331,14 +636,14 @@
     width: 0;
     height: 0;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.25);
     transform: translate(-50%, -50%);
     transition: width 0.6s, height 0.6s;
   }
   
   .card-button:hover::before {
-    width: 400px;
-    height: 400px;
+    width: 500px;
+    height: 500px;
   }
   
   .card-button span {
@@ -353,240 +658,540 @@
   }
   
   .card-button:hover i {
-    transform: translateX(8px);
+    transform: translateX(6px);
   }
   
-  .btn-service {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+  .card-button:active {
+    transform: scale(0.98);
   }
   
-  .btn-service:hover {
-    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
-    transform: translateY(-3px);
+  .btn-foca {
+    background: linear-gradient(135deg, #5B8CD6 0%, #7B68EE 100%);
+    box-shadow: 0 12px 35px rgba(91, 140, 214, 0.35);
   }
   
-  .btn-clinical {
-    background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
-    box-shadow: 0 10px 30px rgba(74, 144, 226, 0.4);
-  }
-  
-  .btn-clinical:hover {
-    box-shadow: 0 15px 40px rgba(74, 144, 226, 0.6);
-    transform: translateY(-3px);
-  }
-  
-  .info-section {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-    border-radius: 20px;
-    padding: 40px;
-    margin-top: 50px;
-    border: 1px solid rgba(102, 126, 234, 0.1);
-    text-align: center;
-  }
-  
-  .info-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: rgba(30, 60, 114, 0.6);
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-  }
-  
-  .info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-  }
-  
-  .info-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-  }
-  
-  .info-item i {
-    color: #667eea;
-    font-size: 18px;
-    margin-top: 3px;
-  }
-  
-  .info-text {
-    flex: 1;
-  }
-  
-  .info-text strong {
-    display: block;
-    color: #1e3c72;
-    margin-bottom: 5px;
-    font-size: 14px;
-  }
-  
-  .info-text span {
-    color: #666;
-    font-size: 13px;
-    line-height: 1.5;
-  }
-  
-  .footer {
-    text-align: center;
-    padding: 25px;
-    color: white;
-    margin-top: 30px;
-  }
-  
-  .footer-content {
-    font-size: 14px;
-    opacity: 0.9;
-  }
-  
-  .footer-links {
-    margin-top: 15px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-  }
-  
-  .footer-link {
-    color: white;
-    text-decoration: none;
-    font-size: 13px;
-    transition: all 0.3s ease;
-    padding: 8px 16px;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-  }
-  
-  .footer-link:hover {
-    background: rgba(255, 255, 255, 0.2);
+  .btn-foca:hover {
+    box-shadow: 0 18px 50px rgba(91, 140, 214, 0.5);
     transform: translateY(-2px);
   }
   
-  @media (max-width: 768px) {
-    .header-section {
-      padding: 30px 20px;
+  .btn-viu {
+    background: linear-gradient(135deg, #86C5DA 0%, #4DD0E1 100%);
+    box-shadow: 0 12px 35px rgba(134, 197, 218, 0.35);
+  }
+  
+  .btn-viu:hover {
+    box-shadow: 0 18px 50px rgba(134, 197, 218, 0.5);
+    transform: translateY(-2px);
+  }
+  
+  /* FOOTER */
+  .footer {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(91, 140, 214, 0.1);
+    padding: 12px 5%;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  
+  .footer-content {
+    font-size: 11px;
+    color: #718096;
+    font-weight: 500;
+  }
+  
+  /* SCROLLBAR */
+  .content-area::-webkit-scrollbar,
+  .sidebar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .content-area::-webkit-scrollbar-track,
+  .sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .content-area::-webkit-scrollbar-thumb,
+  .sidebar::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #5B8CD6 0%, #86C5DA 100%);
+    border-radius: 10px;
+  }
+  
+  .content-area::-webkit-scrollbar-thumb:hover,
+  .sidebar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #4976c7 0%, #6FB4CC 100%);
+  }
+  
+  /* ============================================
+     RESPONSIVE - OPTIMIZADO MÓVIL
+     ============================================ */
+  
+  /* Pantallas grandes */
+  @media (min-width: 1600px) {
+    .cards-grid {
+      gap: 40px;
     }
     
-    .cards-section {
-      padding: 30px 20px;
+    .card-title {
+      font-size: 52px;
     }
     
-    .logo-container {
-      width: 80px;
-      height: 80px;
+    .card-icon {
+      width: 75px;
+      height: 75px;
+      font-size: 35px;
+    }
+  }
+  
+  /* Laptops medianas */
+  @media (max-width: 1400px) {
+    .main-content {
+      grid-template-columns: 280px 1fr;
     }
     
-    .main-title {
-      font-size: 24px;
+    .sidebar {
+      padding: 25px 20px;
     }
     
-    .subtitle {
-      font-size: 16px;
+    .content-area {
+      padding: 25px 30px;
+    }
+    
+    .cards-grid {
+      grid-template-columns: repeat(2, minmax(0, 450px));
+      gap: 25px;
+    }
+    
+    .card-title {
+      font-size: 42px;
+    }
+  }
+  
+  /* Laptops pequeñas */
+  @media (max-width: 1200px) {
+    .cards-grid {
+      grid-template-columns: 1fr;
+      max-width: 550px;
+    }
+  }
+  
+  /* Tablets */
+  @media (max-width: 1024px) {
+    .main-content {
+      grid-template-columns: 1fr;
+      overflow-y: auto;
+    }
+    
+    .sidebar {
+      border-right: none;
+      border-bottom: 1px solid rgba(91, 140, 214, 0.15);
+      padding: 30px 25px;
+    }
+    
+    .content-area {
+      padding: 30px 30px;
+      overflow-y: visible;
+    }
+    
+    .content-title {
+      font-size: 36px;
     }
     
     .cards-grid {
       grid-template-columns: 1fr;
+    }
+  }
+  
+  /* MÓVILES */
+  @media (max-width: 768px) {
+    html, body {
+      height: auto;
+      overflow-y: auto;
+    }
+    
+    .main-container {
+      height: auto;
+      min-height: 100vh;
+    }
+    
+    .header {
+      height: auto;
+      padding: 18px 5%;
+    }
+    
+    .header-content {
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    
+    .logo-section {
+      gap: 12px;
+    }
+    
+    .logo {
+      width: 45px;
+      height: 45px;
+    }
+    
+    .logo img {
+      width: 26px;
+      height: 26px;
+    }
+    
+    .brand-name {
+      font-size: 22px;
+    }
+    
+    .brand-tagline {
+      font-size: 9px;
+    }
+    
+    .divider {
+      display: none;
+    }
+    
+    .nav-info {
+      width: 100%;
+    }
+    
+    .nav-badge {
+      width: 100%;
+      justify-content: center;
+      padding: 10px 16px;
+    }
+    
+    .nav-badge-text {
+      font-size: 12px;
+    }
+    
+    /* CAMBIO DE ORDEN EN MÓVIL */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .content-area {
+      order: 1;
+      padding: 30px 20px;
+    }
+    
+    .content-header {
+      margin-bottom: 28px;
+    }
+    
+    .content-supertitle {
+      font-size: 10px;
+      letter-spacing: 2px;
+    }
+    
+    .content-title {
+      font-size: 32px;
+    }
+    
+    .content-subtitle {
+      font-size: 13px;
+    }
+    
+    .cards-container {
+      align-items: flex-start;
+    }
+    
+    .cards-grid {
       gap: 20px;
     }
     
     .audit-card {
-      padding: 25px;
+      padding: 24px 22px;
     }
     
-    .info-grid {
-      grid-template-columns: 1fr;
+    .card-icon {
+      width: 60px;
+      height: 60px;
+      font-size: 28px;
+      margin-bottom: 14px;
     }
     
-    .footer-links {
-      flex-direction: column;
-      gap: 10px;
+    .card-title {
+      font-size: 40px;
+    }
+    
+    .card-description {
+      font-size: 12px;
+    }
+    
+    .card-label {
+      font-size: 9px;
+      padding: 5px 11px;
+      margin-bottom: 18px;
+    }
+    
+    .card-features {
+      gap: 7px;
+      margin-bottom: 18px;
+    }
+    
+    .feature-item {
+      font-size: 11px;
+    }
+    
+    .card-button {
+      padding: 13px;
+      font-size: 11px;
+    }
+    
+    .sidebar {
+      order: 2;
+      padding: 30px 20px;
+      border-top: 1px solid rgba(91, 140, 214, 0.15);
+      border-bottom: none;
+    }
+    
+    .sidebar-title {
+      justify-content: center;
+    }
+    
+    .sidebar-subtitle {
+      font-size: 20px;
+      text-align: center;
+    }
+    
+    .sidebar-description {
+      text-align: center;
+    }
+    
+    .footer {
+      padding: 16px 5%;
+    }
+    
+    .footer-content {
+      font-size: 10px;
+      line-height: 1.5;
+    }
+  }
+  
+  /* Móviles pequeños */
+  @media (max-width: 480px) {
+    .card-title {
+      font-size: 36px;
+    }
+    
+    .card-icon {
+      width: 55px;
+      height: 55px;
+      font-size: 26px;
     }
   }
 </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header-section">
-      <div class="logo-container">
-        <img src="https://i.imgur.com/3WZzeT6.png" alt="Logo FOCA">
-      </div>
-      <div class="org-title">FUNDACIÓN OFTALMOLÓGICA DEL CARIBE</div>
-      <div class="org-subtitle">Sistema Integral de Gestión de Calidad</div>
-      <h1 class="main-title">Sistema de Auditoría</h1>
-      <p class="subtitle">Seleccione el tipo de lista de verificación que desea realizar</p>
-    </div>
+  <div class="background-effect"></div>
+  
+  <div class="main-container">
     
-    <div class="cards-section">
-      <h2 class="section-title">
-        Seleccione su Sistema de Auditoría
-      </h2>
-      
-      <div class="cards-grid">
-        <!-- Tarjeta 1: FOCA -->
-        <div class="audit-card">
-          <div class="card-icon service">
-            <i class="fas fa-hospital"></i>
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo-section">
+          <div class="logo">
+            <img src="https://i.imgur.com/3WZzeT6.png" alt="Logo Qualisig">
           </div>
-          <h3 class="card-title">FOCA</h3>
-          <p class="card-description">
-            Fundación Oftalmológica del Caribe
-          </p>
-          <div class="card-subtitle">LISTA DE VERIFICACIÓN AUDITORÍA DE SERVICIO</div>
-          <button class="card-button btn-service" onclick="goToServiceAudit()">
-            <span>Acceder</span>
-            <i class="fas fa-arrow-right"></i>
-          </button>
+          <div class="brand-text">
+            <div class="brand-name">QUALISIG</div>
+            <div class="brand-tagline">Gestión de Calidad</div>
+          </div>
         </div>
         
-        <!-- Tarjeta 2: VIU -->
-        <div class="audit-card">
-          <div class="card-icon clinical">
-            <i class="fas fa-eye"></i>
+        <div class="divider"></div>
+        
+        <div class="nav-info">
+          <div class="nav-badge">
+            <i class="fas fa-clipboard-check"></i>
+            <span class="nav-badge-text">Módulo de Auditorías</span>
           </div>
-          <h3 class="card-title">VIU</h3>
-          <p class="card-description">
-            Clínica Oftalmológica Internacional
-          </p>
-          <div class="card-subtitle">LISTA DE VERIFICACIÓN AUDITORÍA DE SERVICIO</div>
-          <button class="card-button btn-clinical" onclick="goToClinicalAudit()">
-            <span>Acceder</span>
-            <i class="fas fa-arrow-right"></i>
-          </button>
         </div>
       </div>
-      
-      <div class="info-section">
-        <h3 class="info-title">Sistema de Gestión de Calidad</h3>
-        <p style="color: #666; font-size: 14px; margin: 0;">Evaluación profesional de estándares de servicio</p>
-      </div>
-    </div>
+    </header>
     
-    <div class="footer">
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+      
+      <!-- SIDEBAR IZQUIERDO -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-title">
+            Auditorías de Servicio
+          </div>
+          <h2 class="sidebar-subtitle">Listas de Verificación</h2>
+          <p class="sidebar-description">
+            Herramientas especializadas para evaluar y garantizar los estándares de calidad en la prestación de servicios oftalmológicos
+          </p>
+        </div>
+        
+        <div class="sidebar-divider"></div>
+        
+        <div class="sidebar-info">
+          <div class="info-item">
+            <div class="info-item-header">
+              <div class="info-icon">
+                <i class="fas fa-list-check"></i>
+              </div>
+              <div class="info-title">Evaluación Integral</div>
+            </div>
+            <p class="info-description">
+              Verificación sistemática de procesos, protocolos y estándares institucionales
+            </p>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-item-header">
+              <div class="info-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div class="info-title">Seguimiento Continuo</div>
+            </div>
+            <p class="info-description">
+              Monitoreo permanente del cumplimiento de indicadores de calidad
+            </p>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-item-header">
+              <div class="info-icon">
+                <i class="fas fa-file-invoice"></i>
+              </div>
+              <div class="info-title">Documentación</div>
+            </div>
+            <p class="info-description">
+              Registro detallado de hallazgos y generación de informes ejecutivos
+            </p>
+          </div>
+        </div>
+      </aside>
+      
+      <!-- ÁREA DE CONTENIDO -->
+      <section class="content-area">
+        <div class="content-header">
+          <div class="content-supertitle">Seleccione la lista de verificación</div>
+          <h1 class="content-title">Instituciones</h1>
+          <p class="content-subtitle">
+            Acceda a la lista de verificación de auditoría de servicio correspondiente a cada institución oftalmológica
+          </p>
+        </div>
+        
+        <div class="cards-container">
+          <div class="cards-grid">
+            
+            <!-- TARJETA FOCA -->
+            <article class="audit-card foca">
+              <div class="card-header">
+                <div class="card-icon foca">
+                  <i class="fas fa-hospital"></i>
+                </div>
+                <h2 class="card-title foca">FOCA</h2>
+                <p class="card-description">
+                  Fundación Oftalmológica del Caribe
+                </p>
+                <span class="card-label">Lista de Verificación</span>
+              </div>
+              
+              <div class="card-body">
+                <div class="card-features">
+                  <div class="feature-item">
+                    <div class="feature-icon foca">
+                      <i class="fas fa-check"></i>
+                    </div>
+                    <span>Criterios de evaluación específicos</span>
+                  </div>
+                  <div class="feature-item">
+                    <div class="feature-icon foca">
+                      <i class="fas fa-check"></i>
+                    </div>
+                    <span>Verificación de procesos asistenciales</span>
+                  </div>
+                  <div class="feature-item">
+                    <div class="feature-icon foca">
+                      <i class="fas fa-check"></i>
+                    </div>
+                    <span>Cumplimiento de protocolos institucionales</span>
+                  </div>
+                </div>
+                
+                <button class="card-button btn-foca" onclick="goToServiceAudit()">
+                  <span>Acceder a la Lista</span>
+                  <i class="fas fa-arrow-right"></i>
+                </button>
+              </div>
+            </article>
+            
+            <!-- TARJETA VIU -->
+            <article class="audit-card viu">
+              <div class="card-header">
+                <div class="card-icon viu">
+                  <i class="fas fa-eye"></i>
+                </div>
+                <h2 class="card-title viu">VIU</h2>
+                <p class="card-description">
+                  Clínica Oftalmológica Internacional
+                </p>
+                <span class="card-label">Lista de Verificación</span>
+              </div>
+              
+              <div class="card-body">
+                <div class="card-features">
+                  <div class="feature-item">
+                    <div class="feature-icon viu">
+                      <i class="fas fa-check"></i>
+                    </div>
+                    <span>Criterios de evaluación específicos</span>
+                  </div>
+                  <div class="feature-item">
+                    <div class="feature-icon viu">
+                      <i class="fas fa-check"></i>
+                    </div>
+                    <span>Verificación de procesos asistenciales</span>
+                  </div>
+                  <div class="feature-item">
+                    <div class="feature-icon viu">
+                      <i class="fas fa-check"></i>
+                    </div>
+                    <span>Cumplimiento de protocolos institucionales</span>
+                  </div>
+                </div>
+                
+                <button class="card-button btn-viu" onclick="goToClinicalAudit()">
+                  <span>Acceder a la Lista</span>
+                  <i class="fas fa-arrow-right"></i>
+                </button>
+              </div>
+            </article>
+            
+          </div>
+        </div>
+      </section>
+      
+    </main>
+    
+    <!-- FOOTER -->
+    <footer class="footer">
       <div class="footer-content">
-        © 2025 Fundación Oftalmológica del Caribe - Sistema de Gestión de Calidad
+        © 2025 Fundación Oftalmológica del Caribe · Qualisig · Sistema de Gestión de Calidad
       </div>
-      <div class="footer-links">
-        <a href="#" class="footer-link"><i class="fas fa-question-circle"></i> Ayuda</a>
-        <a href="#" class="footer-link"><i class="fas fa-book"></i> Manual de Usuario</a>
-        <a href="#" class="footer-link"><i class="fas fa-envelope"></i> Contacto</a>
-      </div>
-    </div>
+    </footer>
+    
   </div>
 
 <script>
 function goToServiceAudit() {
-  // Aquí debes colocar la URL de tu página de Auditoría de Servicio
   window.location.href = 'https://gcalidad3foca-droid.github.io/FORMATOS-LISTAS-DE-VERIFICACION---AUDITORIAS/LISTA DE VERIFICACION AUDITORIA DE SERVICIO - FOCA..html';
 }
 
 function goToClinicalAudit() {
-  // Aquí debes colocar la URL de tu página de Auditoría Clínica
   window.location.href = 'https://gcalidad3foca-droid.github.io/FORMATOS-LISTAS-DE-VERIFICACION---AUDITORIAS/LISTA DE VERIFICACION AUDITORIA DE SERVICIO - VIU..html';
 }
 </script>
 
 </body>
 </html>
+
 
