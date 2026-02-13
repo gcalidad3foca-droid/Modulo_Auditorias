@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Lista de Verificación de Auditoría - FOCA</title>
+<title>Lista de Verificación de Auditoría - FOCA v2.0</title>
 <!-- Biblioteca para exportar a PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.5.28/dist/jspdf.plugin.autotable.min.js"></script>
@@ -287,6 +287,215 @@
     outline: none;
     border-color: #667eea;
   }
+
+  /* Evidence Upload Button */
+  .evidence-cell {
+    text-align: center;
+    position: relative;
+  }
+
+  .evidence-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+  }
+
+  .evidence-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+
+  .evidence-btn i {
+    font-size: 14px;
+  }
+
+  .evidence-btn.has-evidence {
+    background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+  }
+
+  .evidence-btn.has-evidence:hover {
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  }
+
+  .evidence-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #f44336;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .evidence-input {
+    display: none;
+  }
+
+  /* Evidence Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .modal-content {
+    position: relative;
+    background-color: #fff;
+    margin: 3% auto;
+    padding: 0;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 85vh;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .modal-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .close {
+    color: white;
+    font-size: 32px;
+    font-weight: 300;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    line-height: 1;
+  }
+
+  .close:hover {
+    color: #f44336;
+  }
+
+  .modal-body {
+    padding: 24px;
+    max-height: calc(85vh - 140px);
+    overflow-y: auto;
+  }
+
+  .evidence-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .evidence-item {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .evidence-item:hover {
+    transform: scale(1.05);
+  }
+
+  .evidence-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .evidence-remove {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+  }
+
+  .evidence-remove:hover {
+    background: #d32f2f;
+    transform: scale(1.1);
+  }
+
+  .upload-area {
+    border: 2px dashed #667eea;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .upload-area:hover {
+    background: #e3f2fd;
+    border-color: #2a5298;
+  }
+
+  .upload-area i {
+    font-size: 48px;
+    color: #667eea;
+    margin-bottom: 16px;
+  }
+
+  .upload-area p {
+    margin: 0;
+    color: #2c3e50;
+    font-weight: 600;
+  }
   
   /* Results Section */
   .results-section {
@@ -448,6 +657,18 @@
     transform: translateY(-3px);
     box-shadow: 0 8px 16px rgba(244, 67, 54, 0.3);
   }
+
+  .btn-report {
+    background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(156, 39, 176, 0.2);
+  }
+  
+  .btn-report:hover {
+    background: linear-gradient(135deg, #7b1fa2 0%, #6a1b9a 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(156, 39, 176, 0.3);
+  }
   
   .btn-reset {
     background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
@@ -471,6 +692,12 @@
     background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
     transform: translateY(-3px);
     box-shadow: 0 8px 16px rgba(33, 150, 243, 0.3);
+  }
+
+  .btn-disabled {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+    pointer-events: none;
   }
   
   /* Gráficos de Visualización */
@@ -540,6 +767,55 @@
   .notification-info {
     background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
   }
+
+  /* Loading Spinner */
+  .loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .loading-overlay.show {
+    display: flex;
+  }
+
+  .loading-content {
+    text-align: center;
+    color: white;
+  }
+
+  .spinner {
+    border: 4px solid rgba(255,255,255,0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .loading-text {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .loading-subtext {
+    font-size: 14px;
+    opacity: 0.8;
+  }
   
   /* Responsive */
   @media (max-width: 768px) {
@@ -577,6 +853,11 @@
     
     .charts-grid {
       grid-template-columns: 1fr;
+    }
+
+    .modal-content {
+      width: 95%;
+      margin: 5% auto;
     }
   }
   
@@ -671,12 +952,13 @@
         <table id="checklist">
           <thead>
             <tr>
-              <th style="width:40%;">ASPECTOS A EVALUAR</th>
-              <th style="width:8%;">C</th>
-              <th style="width:8%;">CP</th>
-              <th style="width:8%;">NC</th>
-              <th style="width:8%;">N/A</th>
-              <th style="width:28%;">OBSERVACIONES</th>
+              <th style="width:35%;">ASPECTOS A EVALUAR</th>
+              <th style="width:7%;">C</th>
+              <th style="width:7%;">CP</th>
+              <th style="width:7%;">NC</th>
+              <th style="width:7%;">N/A</th>
+              <th style="width:10%;">EVIDENCIA</th>
+              <th style="width:27%;">OBSERVACIONES</th>
             </tr>
           </thead>
           <tbody id="tbody"></tbody>
@@ -747,9 +1029,14 @@
       </div>
 
       <div class="export-buttons-container">
-        <button class="export-btn btn-pdf" id="export-pdf">
+        <button class="export-btn btn-report" id="generate-report">
           <i class="fas fa-file-pdf"></i>
-          Exportar a PDF
+          Generar Informe Completo
+        </button>
+
+        <button class="export-btn btn-pdf" id="export-pdf">
+          <i class="fas fa-file-export"></i>
+          Exportar Lista Verificación
         </button>
         
         <button class="export-btn btn-save" id="save-audit">
@@ -762,6 +1049,33 @@
           Restablecer Formulario
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- Evidence Modal -->
+  <div id="evidenceModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Evidencia Fotográfica</h2>
+        <span class="close" onclick="closeEvidenceModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="upload-area" onclick="document.getElementById('modal-file-input').click()">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <p>Click para agregar fotos</p>
+          <input type="file" id="modal-file-input" class="evidence-input" accept="image/*" multiple onchange="handleEvidenceUpload(event)">
+        </div>
+        <div id="evidence-preview" class="evidence-preview"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="loading-overlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <div class="loading-text" id="loading-text">Generando informe...</div>
+      <div class="loading-subtext" id="loading-subtext">Por favor espere</div>
     </div>
   </div>
 
@@ -784,19 +1098,19 @@ const DATA = [
       "Verificar diligenciamiento correcto del nivel y valor de cuota moderadora / copago",
       "Verificar comprensión de la información, incluyendo dudas por parte del paciente/familiar",
       "Verificar invitación al buzón de sugerencias al paciente",
-      "Verificar cumplimiento de la caja preferencial (demarcada con movilidad reducida, mujeres embarazadas y niños de brazos)"
+      "Verificar cumplimiento de la caja preferencial (que se encuentre demarcada con movilidad reducida, mujeres embarazadas y niños de brazos)"
     ]
   },
   {
     "name": "PRESTACIÓN DEL SERVICIO",
     "weight": 0.2,
     "items": [  
-      "El personal de orientacion en el Smart Queue brinda informacion clara y   completa, realiza educacion sobre el uso de la herramienta y asigna el turno correspondiente al servicio requerido y mantiene trato respetuoso al usuario",
+      "El personal de orientación en el Smart Queue brinda información clara y completa, realiza educación sobre el uso de la herramienta y asigna el turno correspondiente al servicio requerido y mantiene trato respetuoso al usuario",
       "Verificar saludo y presentación por parte del equipo médico",
       "Verificar educación al paciente y/o cuidador sobre riesgos y beneficios de la dilatación ocular",
       "Verificar si el tiempo de atención está en el estándar establecido. Oftalmología (Max 20min - Min 10) Optometría (Max 10Min- 5Min)",
       "Verificar que el profesional de salud entregue y explique de manera clara al paciente el diagnóstico, el plan de tratamiento, la prescripción médica, las remisiones, las órdenes de estudios diagnósticos y, cuando aplique, la indicación de cirugía, asegurando su comprensión",
-      "Verificar entrega efectiva de copias impresas del ordenamiento medico, incluye recomendaciones universales que incluya: verificacion de la correcta identificación del paciente y el tiempo de entrega de orden (10min - 15max)"
+      "Verificar entrega efectiva de copias impresas del ordenamiento médico, incluye recomendaciones universales que incluya: verificación de la correcta identificación del paciente y el tiempo de entrega de orden (10min - 15max)"
     ]
   },
   {
@@ -853,26 +1167,38 @@ const DATA = [
 
 const SCORE = { C: 1, CP: 0.5, NC: 0 };
 let categoryChart, distributionChart;
+let currentEvidenceItem = null;
+let evidenceStore = {};
 
 function makeId(str, idx) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + idx;
 }
 
 function renderChecklist() {
+  console.log('renderChecklist called');
+  console.log('DATA sections:', DATA.length);
+  
   const tbody = document.getElementById('tbody');
+  if (!tbody) {
+    console.error('tbody element not found!');
+    return;
+  }
   tbody.innerHTML = '';
   
   DATA.forEach(section => {
+    console.log('Rendering section:', section.name, 'with', section.items.length, 'items');
     const trTitle = document.createElement('tr');
     const tdTitle = document.createElement('td');
-    tdTitle.colSpan = 6;
+    tdTitle.colSpan = 7;
     tdTitle.className = 'section-title';
     tdTitle.textContent = section.name;
     trTitle.appendChild(tdTitle);
     tbody.appendChild(trTitle);
 
     section.items.forEach((text, idx) => {
+      const itemId = makeId(section.name, idx);
       const row = document.createElement('tr');
+      
       const tdAspect = document.createElement('td');
       tdAspect.textContent = text;
       row.appendChild(tdAspect);
@@ -880,9 +1206,20 @@ function renderChecklist() {
       ['C','CP','NC','NA'].forEach(mark => {
         const td = document.createElement('td');
         td.className = 'radio-cell';
-        td.innerHTML = '<input type="radio" name="' + makeId(section.name, idx) + '" value="' + mark + '">';
+        td.innerHTML = '<input type="radio" name="' + itemId + '" value="' + mark + '">';
         row.appendChild(td);
       });
+
+      // Evidence button cell
+      const tdEvidence = document.createElement('td');
+      tdEvidence.className = 'evidence-cell';
+      const evidenceBtn = document.createElement('button');
+      evidenceBtn.className = 'evidence-btn';
+      evidenceBtn.innerHTML = '<i class="fas fa-camera"></i><span>Foto</span>';
+      evidenceBtn.onclick = () => openEvidenceModal(section.name, idx, text);
+      evidenceBtn.id = 'evidence-btn-' + itemId;
+      tdEvidence.appendChild(evidenceBtn);
+      row.appendChild(tdEvidence);
 
       const tdObs = document.createElement('td');
       tdObs.innerHTML = '<input type="text" class="obs-input" placeholder="Observaciones...">';
@@ -895,7 +1232,7 @@ function renderChecklist() {
     const tdResLbl = document.createElement('td');
     tdResLbl.textContent = 'Resultado %';
     const tdResVal = document.createElement('td');
-    tdResVal.colSpan = 5;
+    tdResVal.colSpan = 6;
     tdResVal.className = 'radio-cell';
     tdResVal.id = 'result-' + makeId(section.name, 0);
     tdResVal.textContent = '0%';
@@ -903,6 +1240,108 @@ function renderChecklist() {
     trRes.appendChild(tdResVal);
     tbody.appendChild(trRes);
   });
+  
+  console.log('renderChecklist completed - total rows added:', tbody.children.length);
+}
+
+function openEvidenceModal(sectionName, itemIdx, itemText) {
+  currentEvidenceItem = makeId(sectionName, itemIdx);
+  document.getElementById('modal-title').textContent = `Evidencia: ${itemText}`;
+  
+  // Load existing evidence
+  const preview = document.getElementById('evidence-preview');
+  preview.innerHTML = '';
+  
+  const evidence = evidenceStore[currentEvidenceItem] || [];
+  evidence.forEach((imgData, idx) => {
+    const item = document.createElement('div');
+    item.className = 'evidence-item';
+    item.innerHTML = `
+      <img src="${imgData}" alt="Evidencia ${idx + 1}">
+      <button class="evidence-remove" onclick="removeEvidence(${idx})">
+        <i class="fas fa-times"></i>
+      </button>
+    `;
+    preview.appendChild(item);
+  });
+  
+  document.getElementById('evidenceModal').style.display = 'block';
+}
+
+function closeEvidenceModal() {
+  document.getElementById('evidenceModal').style.display = 'none';
+  currentEvidenceItem = null;
+  document.getElementById('modal-file-input').value = '';
+}
+
+function handleEvidenceUpload(event) {
+  const files = event.target.files;
+  if (!files.length || !currentEvidenceItem) return;
+  
+  if (!evidenceStore[currentEvidenceItem]) {
+    evidenceStore[currentEvidenceItem] = [];
+  }
+  
+  Array.from(files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      evidenceStore[currentEvidenceItem].push(e.target.result);
+      updateEvidencePreview();
+      updateEvidenceButton();
+    };
+    reader.readAsDataURL(file);
+  });
+  
+  event.target.value = '';
+}
+
+function removeEvidence(idx) {
+  if (!currentEvidenceItem) return;
+  evidenceStore[currentEvidenceItem].splice(idx, 1);
+  if (evidenceStore[currentEvidenceItem].length === 0) {
+    delete evidenceStore[currentEvidenceItem];
+  }
+  updateEvidencePreview();
+  updateEvidenceButton();
+}
+
+function updateEvidencePreview() {
+  const preview = document.getElementById('evidence-preview');
+  preview.innerHTML = '';
+  
+  const evidence = evidenceStore[currentEvidenceItem] || [];
+  evidence.forEach((imgData, idx) => {
+    const item = document.createElement('div');
+    item.className = 'evidence-item';
+    item.innerHTML = `
+      <img src="${imgData}" alt="Evidencia ${idx + 1}">
+      <button class="evidence-remove" onclick="removeEvidence(${idx})">
+        <i class="fas fa-times"></i>
+      </button>
+    `;
+    preview.appendChild(item);
+  });
+}
+
+function updateEvidenceButton() {
+  const btn = document.getElementById('evidence-btn-' + currentEvidenceItem);
+  if (!btn) return;
+  
+  const count = (evidenceStore[currentEvidenceItem] || []).length;
+  
+  if (count > 0) {
+    btn.classList.add('has-evidence');
+    if (!btn.querySelector('.evidence-count')) {
+      const badge = document.createElement('span');
+      badge.className = 'evidence-count';
+      btn.appendChild(badge);
+    }
+    btn.querySelector('.evidence-count').textContent = count;
+  } else {
+    btn.classList.remove('has-evidence');
+    const badge = btn.querySelector('.evidence-count');
+    if (badge) badge.remove();
+  }
 }
 
 function computeResults() {
@@ -917,7 +1356,7 @@ function computeResults() {
       for (const r of radios) if (r.checked) chosen = r.value;
       if (chosen) {
         if (chosen === 'NA') {
-          sum += 1; // N/A cuenta como 100%
+          sum += 1;
           n += 1;
         } else {
           sum += SCORE[chosen];
@@ -994,9 +1433,19 @@ function showNotification(message, type = 'success') {
   }, 3000);
 }
 
+function showLoading(text = 'Procesando...', subtext = 'Por favor espere') {
+  document.getElementById('loading-text').textContent = text;
+  document.getElementById('loading-subtext').textContent = subtext;
+  document.getElementById('loading-overlay').classList.add('show');
+}
+
+function hideLoading() {
+  document.getElementById('loading-overlay').classList.remove('show');
+}
+
 async function exportToPDF() {
   try {
-    showNotification('Generando PDF', 'info');
+    showNotification('Generando PDF de lista de verificación', 'info');
     
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'mm', 'a4');
@@ -1021,6 +1470,7 @@ async function exportToPDF() {
       return false;
     }
     
+    // Header
     doc.setFillColor(30, 60, 114);
     doc.rect(0, 0, pageWidth, 65, 'F');
     
@@ -1045,7 +1495,6 @@ async function exportToPDF() {
     doc.text('FUNDACIÓN OFTALMOLÓGICA DEL CARIBE', pageWidth / 2, 22, { align: 'center' });
     
     doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
     doc.text('LISTA DE VERIFICACIÓN DE AUDITORÍA DE SERVICIO', pageWidth / 2, 38, { align: 'center' });
     
     doc.setFontSize(9);
@@ -1070,6 +1519,7 @@ async function exportToPDF() {
     
     yPos = 75;
     
+    // Meta section
     doc.setFillColor(248, 249, 250);
     doc.rect(margin, yPos, contentWidth, 30, 'F');
     
@@ -1093,6 +1543,7 @@ async function exportToPDF() {
     
     yPos += 37;
     
+    // Checklist table
     doc.setTextColor(30, 60, 114);
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
@@ -1115,7 +1566,8 @@ async function exportToPDF() {
       }]);
       
       section.items.forEach((item, idx) => {
-        const radios = document.getElementsByName(makeId(section.name, idx));
+        const itemId = makeId(section.name, idx);
+        const radios = document.getElementsByName(itemId);
         let selectedValue = '';
         for (const r of radios) {
           if (r.checked) selectedValue = r.value;
@@ -1191,8 +1643,7 @@ async function exportToPDF() {
       }
     });
     
-    yPos = doc.lastAutoTable.finalY + 10;
-    
+    // Results page
     doc.addPage();
     yPos = margin;
     
@@ -1240,15 +1691,15 @@ async function exportToPDF() {
     
     yPos = doc.lastAutoTable.finalY + 15;
     
-    const status = legendFor(finalPct);
-    let bgColor;
-    if (finalPct >= 92) bgColor = [76, 175, 80];
-    else if (finalPct >= 85) bgColor = [255, 152, 0];
-    else bgColor = [244, 67, 54];
+    const finalStatus = legendFor(finalPct);
+    let statusBgColor;
+    if (finalPct >= 92) statusBgColor = [76, 175, 80];
+    else if (finalPct >= 85) statusBgColor = [255, 152, 0];
+    else statusBgColor = [244, 67, 54];
     
     checkPageBreak(55);
     
-    doc.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
+    doc.setFillColor(statusBgColor[0], statusBgColor[1], statusBgColor[2]);
     doc.roundedRect(margin + 10, yPos, contentWidth - 20, 45, 3, 3, 'F');
     
     doc.setTextColor(255, 255, 255);
@@ -1260,38 +1711,10 @@ async function exportToPDF() {
     doc.text(`${finalPct}%`, pageWidth / 2, yPos + 26, { align: 'center' });
     
     doc.setFontSize(12);
-    doc.text(status.toUpperCase(), pageWidth / 2, yPos + 38, { align: 'center' });
+    doc.text(finalStatus.toUpperCase(), pageWidth / 2, yPos + 38, { align: 'center' });
     
+    // Charts
     yPos += 55;
-    
-    checkPageBreak(50);
-    
-    doc.setDrawColor(224, 224, 224);
-    doc.setFillColor(255, 255, 255);
-    doc.roundedRect(margin + 10, yPos, contentWidth - 20, 38, 3, 3, 'FD');
-    
-    doc.setTextColor(44, 62, 80);
-    doc.setFontSize(7.5);
-    doc.setFont('helvetica', 'normal');
-    
-    const legendItems = [
-      { color: [76, 175, 80], text: 'Mayor o igual a 92% - Riesgo Bajo. Cumple' },
-      { color: [255, 152, 0], text: 'Mayor o igual a 85% - Riesgo Medio. Cumple parcialmente' },
-      { color: [244, 67, 54], text: 'Menor de 85% - Riesgo Alto. Intervencion inmediata' }
-    ];
-    
-    legendItems.forEach((item, index) => {
-      const legendY = yPos + 12 + (index * 10);
-      
-      doc.setFillColor(item.color[0], item.color[1], item.color[2]);
-      doc.circle(margin + 15, legendY - 1, 2, 'F');
-      
-      doc.setTextColor(44, 62, 80);
-      doc.text(item.text, margin + 20, legendY);
-    });
-    
-    yPos += 48;
-    
     checkPageBreak(120);
     
     doc.setTextColor(30, 60, 114);
@@ -1316,10 +1739,8 @@ async function exportToPDF() {
         
         tempCtx.imageSmoothingEnabled = true;
         tempCtx.imageSmoothingQuality = 'high';
-        
         tempCtx.fillStyle = '#ffffff';
         tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-        
         tempCtx.scale(scale, scale);
         tempCtx.drawImage(categoryCanvas, 0, 0);
         
@@ -1353,10 +1774,8 @@ async function exportToPDF() {
         
         tempCtx.imageSmoothingEnabled = true;
         tempCtx.imageSmoothingQuality = 'high';
-        
         tempCtx.fillStyle = '#ffffff';
         tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-        
         tempCtx.scale(scale, scale);
         tempCtx.drawImage(distributionCanvas, 0, 0);
         
@@ -1375,12 +1794,9 @@ async function exportToPDF() {
       }
     } catch (error) {
       console.warn('No se pudieron capturar las gráficas:', error);
-      doc.setFontSize(8);
-      doc.setTextColor(128, 128, 128);
-      doc.setFont('helvetica', 'italic');
-      doc.text('(Las gráficas no pudieron ser generadas)', margin, yPos);
     }
     
+    // Footer
     const pageCount = doc.internal.getNumberOfPages();
     doc.setFontSize(8);
     doc.setTextColor(128, 128, 128);
@@ -1392,13 +1808,777 @@ async function exportToPDF() {
       doc.text(`Generado: ${new Date().toLocaleDateString('es-CO')}`, pageWidth - margin, pageHeight - 10, { align: 'right' });
     }
     
-    const fileName = `Auditoria_Servicio_${fecha.replace(/-/g, '')}_${sede.replace(/\s+/g, '_')}.pdf`;
+    const fileName = `Lista_Verificacion_${fecha.replace(/-/g, '')}_${sede.replace(/\s+/g, '_')}.pdf`;
     doc.save(fileName);
     
     showNotification('PDF exportado exitosamente', 'success');
   } catch (error) {
     console.error('Error al exportar PDF:', error);
     showNotification('Error al exportar PDF: ' + error.message, 'error');
+  }
+}
+
+async function generateComprehensiveReport() {
+  try {
+    const fecha = document.getElementById('fecha').value;
+    const sede = document.getElementById('sede').value;
+    const auditor = document.getElementById('auditor').value;
+    
+    if (!fecha || !sede || !auditor) {
+      showNotification('Por favor complete todos los campos antes de generar el informe', 'error');
+      return;
+    }
+
+    showLoading('Generando informe completo con IA...', 'Esto puede tomar unos momentos');
+    
+    const { results, finalPct } = computeResults();
+    
+    // Collect detailed findings
+    const conformeFindings = [];
+    const noConformeFindings = [];
+    
+    DATA.forEach(section => {
+      const sectionConformes = [];
+      const sectionNoConformes = [];
+      
+      section.items.forEach((item, idx) => {
+        const itemId = makeId(section.name, idx);
+        const radios = document.getElementsByName(itemId);
+        let selectedValue = '';
+        for (const r of radios) {
+          if (r.checked) selectedValue = r.value;
+        }
+        
+        const allRows = document.querySelectorAll('#tbody tr');
+        let observation = '';
+        for (const row of allRows) {
+          const firstCell = row.cells[0];
+          if (firstCell && firstCell.textContent === item) {
+            const obsInput = row.querySelector('.obs-input');
+            if (obsInput) observation = obsInput.value;
+            break;
+          }
+        }
+        
+        if (selectedValue === 'C' || selectedValue === 'NA') {
+          sectionConformes.push({ item, observation });
+        } else if (selectedValue === 'CP' || selectedValue === 'NC') {
+          sectionNoConformes.push({ 
+            item, 
+            observation, 
+            severity: selectedValue === 'NC' ? 'No Cumple' : 'Cumple Parcialmente' 
+          });
+        }
+      });
+      
+      if (sectionConformes.length > 0) {
+        conformeFindings.push({
+          section: section.name,
+          findings: sectionConformes
+        });
+      }
+      
+      if (sectionNoConformes.length > 0) {
+        noConformeFindings.push({
+          section: section.name,
+          findings: sectionNoConformes
+        });
+      }
+    });
+    
+    // Generate AI analysis
+    const analysisPrompt = `Como experto en auditorías de calidad en salud, analiza los siguientes resultados de auditoría y genera un informe profesional:
+
+DATOS DE LA AUDITORÍA:
+- Sede: ${sede}
+- Fecha: ${fecha}
+- Auditor: ${auditor}
+- Resultado Final: ${finalPct}%
+- Clasificación de Riesgo: ${legendFor(finalPct)}
+
+RESULTADOS POR CATEGORÍA:
+${results.map(r => `- ${r.name}: ${r.percentage}% (Ponderación: ${Math.round(r.weight * 100)}%)`).join('\n')}
+
+HALLAZGOS NO CONFORMES:
+${noConformeFindings.map(nf => `
+${nf.section}:
+${nf.findings.map(f => `  - [${f.severity}] ${f.item}${f.observation ? '\n    Observación: ' + f.observation : ''}`).join('\n')}
+`).join('\n')}
+
+HALLAZGOS CONFORMES:
+${conformeFindings.map(cf => `
+${cf.section}:
+${cf.findings.map(f => `  - ${f.item}${f.observation ? ' (Observación: ' + f.observation + ')' : ''}`).join('\n')}
+`).join('\n')}
+
+Por favor genera:
+1. Un resumen ejecutivo conciso (máximo 150 palabras) que destaque los aspectos más críticos
+2. Un análisis detallado por categoría, identificando fortalezas y áreas de mejora
+3. Recomendaciones específicas y accionables para cada hallazgo no conforme
+4. Oportunidades de mejora para optimizar los procesos evaluados
+5. Un plan de acción sugerido con prioridades (corto, mediano y largo plazo)
+
+El tono debe ser profesional, objetivo y constructivo.`;
+
+    // Call Claude API for analysis
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 4000,
+        messages: [
+          { role: "user", content: analysisPrompt }
+        ],
+      })
+    });
+
+    const data = await response.json();
+    const aiAnalysis = data.content.find(item => item.type === "text")?.text || "No se pudo generar el análisis";
+    
+    hideLoading();
+    
+    // Generate comprehensive PDF report
+    await generatePDFReport(fecha, sede, auditor, results, finalPct, conformeFindings, noConformeFindings, aiAnalysis);
+    
+  } catch (error) {
+    hideLoading();
+    console.error('Error al generar informe:', error);
+    showNotification('Error al generar el informe: ' + error.message, 'error');
+  }
+}
+
+async function generatePDFReport(fecha, sede, auditor, results, finalPct, conformeFindings, noConformeFindings, aiAnalysis) {
+  try {
+    showLoading('Creando PDF del informe...', 'Insertando gráficas y evidencias');
+    
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4');
+    
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 15;
+    const contentWidth = pageWidth - (margin * 2);
+    let yPos = margin;
+    let pageNumber = 1;
+    
+    function checkPageBreak(requiredSpace) {
+      if (yPos + requiredSpace > pageHeight - 25) {
+        addFooter();
+        doc.addPage();
+        pageNumber++;
+        yPos = margin;
+        return true;
+      }
+      return false;
+    }
+    
+    function addFooter() {
+      doc.setFontSize(8);
+      doc.setTextColor(128, 128, 128);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Página ${pageNumber}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+      doc.text(`Generado: ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}`, pageWidth - margin, pageHeight - 10, { align: 'right' });
+    }
+    
+    // ===== PORTADA =====
+    doc.setFillColor(30, 60, 114);
+    doc.rect(0, 0, pageWidth, pageHeight, 'F');
+    
+    // Logo
+    try {
+      const logoImg = document.querySelector('.logo img');
+      if (logoImg && logoImg.complete) {
+        doc.addImage(logoImg.src, 'PNG', pageWidth/2 - 25, 40, 50, 50);
+      }
+    } catch (error) {
+      console.warn('No se pudo insertar el logo');
+    }
+    
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(24);
+    doc.setFont('helvetica', 'bold');
+    doc.text('INFORME DE AUDITORÍA', pageWidth / 2, 110, { align: 'center' });
+    doc.text('DE SERVICIO', pageWidth / 2, 120, { align: 'center' });
+    
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Fundación Oftalmológica del Caribe - FOCA', pageWidth / 2, 135, { align: 'center' });
+    
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`SEDE: ${sede}`, pageWidth / 2, 160, { align: 'center' });
+    
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Fecha de Auditoría: ${fecha}`, pageWidth / 2, 170, { align: 'center' });
+    doc.text(`Auditor: ${auditor}`, pageWidth / 2, 178, { align: 'center' });
+    
+    // Status badge on cover
+    let coverBgColor;
+    const statusText = legendFor(finalPct);
+    if (finalPct >= 92) coverBgColor = [76, 175, 80];
+    else if (finalPct >= 85) coverBgColor = [255, 152, 0];
+    else coverBgColor = [244, 67, 54];
+    
+    doc.setFillColor(coverBgColor[0], coverBgColor[1], coverBgColor[2]);
+    doc.roundedRect(pageWidth/2 - 40, 200, 80, 35, 5, 5, 'F');
+    
+    doc.setFontSize(10);
+    doc.text('CALIFICACIÓN FINAL', pageWidth / 2, 210, { align: 'center' });
+    
+    doc.setFontSize(32);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${finalPct}%`, pageWidth / 2, 225, { align: 'center' });
+    
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text(statusText.toUpperCase(), pageWidth / 2, 233, { align: 'center' });
+    
+    doc.setFontSize(8);
+    doc.setTextColor(200, 200, 200);
+    doc.text(`Código: F-FSYM-797  |  Versión: 004  |  Vigencia: 2022-08-08`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+    
+    // ===== PÁGINA 2: RESUMEN EJECUTIVO =====
+    doc.addPage();
+    pageNumber++;
+    yPos = margin;
+    
+    doc.setTextColor(30, 60, 114);
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text('RESUMEN EJECUTIVO', margin, yPos);
+    yPos += 10;
+    
+    doc.setDrawColor(102, 126, 234);
+    doc.setLineWidth(0.5);
+    doc.line(margin, yPos, pageWidth - margin, yPos);
+    yPos += 8;
+    
+    // Extract executive summary from AI analysis
+    const summaryMatch = aiAnalysis.match(/(?:resumen ejecutivo|1\.|^)[\s\S]*?(?=\n\n|\n2\.|$)/im);
+    const executiveSummary = summaryMatch ? summaryMatch[0].replace(/^.*?:\s*/i, '').trim() : aiAnalysis.substring(0, 800);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(44, 62, 80);
+    doc.setFont('helvetica', 'normal');
+    const summaryLines = doc.splitTextToSize(executiveSummary, contentWidth);
+    doc.text(summaryLines, margin, yPos);
+    yPos += summaryLines.length * 5 + 10;
+    
+    // Quick stats boxes
+    checkPageBreak(40);
+    
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(30, 60, 114);
+    doc.text('INDICADORES CLAVE', margin, yPos);
+    yPos += 8;
+    
+    const boxWidth = (contentWidth - 10) / 3;
+    
+    // Box 1: Total conformes
+    const totalItems = DATA.reduce((sum, section) => sum + section.items.length, 0);
+    const conformes = conformeFindings.reduce((sum, cf) => sum + cf.findings.length, 0);
+    
+    doc.setFillColor(232, 245, 233);
+    doc.roundedRect(margin, yPos, boxWidth, 25, 3, 3, 'F');
+    doc.setTextColor(46, 125, 50);
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text(conformes.toString(), margin + boxWidth/2, yPos + 12, { align: 'center' });
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Hallazgos Conformes', margin + boxWidth/2, yPos + 20, { align: 'center' });
+    
+    // Box 2: Total no conformes
+    const noConformes = noConformeFindings.reduce((sum, nf) => sum + nf.findings.length, 0);
+    
+    doc.setFillColor(255, 243, 224);
+    doc.roundedRect(margin + boxWidth + 5, yPos, boxWidth, 25, 3, 3, 'F');
+    doc.setTextColor(245, 124, 0);
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text(noConformes.toString(), margin + boxWidth + 5 + boxWidth/2, yPos + 12, { align: 'center' });
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Hallazgos No Conformes', margin + boxWidth + 5 + boxWidth/2, yPos + 20, { align: 'center' });
+    
+    // Box 3: Completion rate
+    const completionRate = Math.round((conformes / totalItems) * 100);
+    
+    doc.setFillColor(227, 242, 253);
+    doc.roundedRect(margin + (boxWidth + 5) * 2, yPos, boxWidth, 25, 3, 3, 'F');
+    doc.setTextColor(25, 118, 210);
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${completionRate}%`, margin + (boxWidth + 5) * 2 + boxWidth/2, yPos + 12, { align: 'center' });
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Tasa de Cumplimiento', margin + (boxWidth + 5) * 2 + boxWidth/2, yPos + 20, { align: 'center' });
+    
+    yPos += 35;
+    
+    addFooter();
+    
+    // ===== PÁGINA 3: RESULTADOS POR CATEGORÍA =====
+    doc.addPage();
+    pageNumber++;
+    yPos = margin;
+    
+    doc.setTextColor(30, 60, 114);
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text('RESULTADOS POR CATEGORÍA', margin, yPos);
+    yPos += 10;
+    
+    doc.setDrawColor(102, 126, 234);
+    doc.line(margin, yPos, pageWidth - margin, yPos);
+    yPos += 10;
+    
+    // Results table
+    const resultsTableData = results.map(result => [
+      result.name,
+      `${Math.round(result.weight * 100)}%`,
+      `${result.percentage}%`,
+      legendFor(result.percentage)
+    ]);
+    
+    doc.autoTable({
+      startY: yPos,
+      head: [['Categoría', 'Ponderación', 'Resultado', 'Estado']],
+      body: resultsTableData,
+      theme: 'grid',
+      headStyles: {
+        fillColor: [30, 60, 114],
+        textColor: [255, 255, 255],
+        fontSize: 10,
+        fontStyle: 'bold',
+        halign: 'center'
+      },
+      bodyStyles: {
+        fontSize: 9,
+        textColor: [44, 62, 80]
+      },
+      columnStyles: {
+        0: { cellWidth: 70, halign: 'left', fontStyle: 'bold' },
+        1: { cellWidth: 30, halign: 'center' },
+        2: { cellWidth: 30, halign: 'center', fontStyle: 'bold' },
+        3: { cellWidth: 'auto', halign: 'center' }
+      },
+      margin: { left: margin, right: margin },
+      didParseCell: function(data) {
+        if (data.section === 'body' && data.column.index === 3) {
+          const value = data.cell.text[0];
+          if (value === 'Riesgo Bajo') {
+            data.cell.styles.textColor = [46, 125, 50];
+            data.cell.styles.fillColor = [232, 245, 233];
+          } else if (value === 'Riesgo Medio') {
+            data.cell.styles.textColor = [245, 124, 0];
+            data.cell.styles.fillColor = [255, 243, 224];
+          } else if (value === 'Riesgo Alto') {
+            data.cell.styles.textColor = [211, 47, 47];
+            data.cell.styles.fillColor = [255, 235, 238];
+          }
+        }
+      }
+    });
+    
+    yPos = doc.lastAutoTable.finalY + 15;
+    
+    // Add charts
+    checkPageBreak(80);
+    
+    try {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const categoryCanvas = document.getElementById('categoryChart');
+      if (categoryCanvas && categoryChart) {
+        categoryChart.update('none');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        const tempCanvas = document.createElement('canvas');
+        const scale = 5;
+        tempCanvas.width = categoryCanvas.width * scale;
+        tempCanvas.height = categoryCanvas.height * scale;
+        const tempCtx = tempCanvas.getContext('2d', { alpha: false });
+        
+        tempCtx.imageSmoothingEnabled = true;
+        tempCtx.imageSmoothingQuality = 'high';
+        tempCtx.fillStyle = '#ffffff';
+        tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+        tempCtx.scale(scale, scale);
+        tempCtx.drawImage(categoryCanvas, 0, 0);
+        
+        const categoryImgData = tempCanvas.toDataURL('image/png', 1.0);
+        
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(30, 60, 114);
+        doc.text('Gráfica de Resultados por Categoría', margin, yPos);
+        yPos += 5;
+        
+        const chartWidth = contentWidth * 0.9;
+        const chartHeight = 70;
+        const xOffset = (contentWidth - chartWidth) / 2;
+        doc.addImage(categoryImgData, 'PNG', margin + xOffset, yPos, chartWidth, chartHeight);
+        yPos += chartHeight + 10;
+      }
+      
+      checkPageBreak(80);
+      
+      const distributionCanvas = document.getElementById('distributionChart');
+      if (distributionCanvas && distributionChart) {
+        distributionChart.update('none');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        const tempCanvas = document.createElement('canvas');
+        const scale = 5;
+        tempCanvas.width = distributionCanvas.width * scale;
+        tempCanvas.height = distributionCanvas.height * scale;
+        const tempCtx = tempCanvas.getContext('2d', { alpha: false });
+        
+        tempCtx.imageSmoothingEnabled = true;
+        tempCtx.imageSmoothingQuality = 'high';
+        tempCtx.fillStyle = '#ffffff';
+        tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+        tempCtx.scale(scale, scale);
+        tempCtx.drawImage(distributionCanvas, 0, 0);
+        
+        const distributionImgData = tempCanvas.toDataURL('image/png', 1.0);
+        
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(30, 60, 114);
+        doc.text('Distribución de Evaluaciones', margin, yPos);
+        yPos += 5;
+        
+        const chartWidth = contentWidth * 0.9;
+        const chartHeight = 70;
+        const xOffset = (contentWidth - chartWidth) / 2;
+        doc.addImage(distributionImgData, 'PNG', margin + xOffset, yPos, chartWidth, chartHeight);
+      }
+    } catch (error) {
+      console.warn('Error al insertar gráficas:', error);
+    }
+    
+    addFooter();
+    
+    // ===== HALLAZGOS CONFORMES =====
+    if (conformeFindings.length > 0) {
+      doc.addPage();
+      pageNumber++;
+      yPos = margin;
+      
+      doc.setTextColor(30, 60, 114);
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('HALLAZGOS CONFORMES', margin, yPos);
+      yPos += 10;
+      
+      doc.setDrawColor(76, 175, 80);
+      doc.line(margin, yPos, pageWidth - margin, yPos);
+      yPos += 10;
+      
+      conformeFindings.forEach(cf => {
+        checkPageBreak(20);
+        
+        doc.setFillColor(232, 245, 233);
+        doc.roundedRect(margin, yPos, contentWidth, 8, 2, 2, 'F');
+        
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(46, 125, 50);
+        doc.text(cf.section, margin + 3, yPos + 6);
+        yPos += 12;
+        
+        cf.findings.forEach((finding, idx) => {
+          checkPageBreak(15);
+          
+          doc.setFontSize(9);
+          doc.setTextColor(44, 62, 80);
+          doc.setFont('helvetica', 'normal');
+          
+          const bullet = '•';
+          doc.text(bullet, margin + 2, yPos);
+          
+          const itemText = doc.splitTextToSize(finding.item, contentWidth - 10);
+          doc.text(itemText, margin + 6, yPos);
+          yPos += itemText.length * 4;
+          
+          if (finding.observation) {
+            doc.setFont('helvetica', 'italic');
+            doc.setTextColor(100, 100, 100);
+            const obsText = doc.splitTextToSize(`Observación: ${finding.observation}`, contentWidth - 12);
+            doc.text(obsText, margin + 8, yPos);
+            yPos += obsText.length * 4;
+          }
+          
+          yPos += 3;
+        });
+        
+        yPos += 5;
+      });
+      
+      addFooter();
+    }
+    
+    // ===== HALLAZGOS NO CONFORMES =====
+    if (noConformeFindings.length > 0) {
+      doc.addPage();
+      pageNumber++;
+      yPos = margin;
+      
+      doc.setTextColor(30, 60, 114);
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('HALLAZGOS NO CONFORMES', margin, yPos);
+      yPos += 10;
+      
+      doc.setDrawColor(244, 67, 54);
+      doc.line(margin, yPos, pageWidth - margin, yPos);
+      yPos += 10;
+      
+      noConformeFindings.forEach(nf => {
+        checkPageBreak(20);
+        
+        doc.setFillColor(255, 235, 238);
+        doc.roundedRect(margin, yPos, contentWidth, 8, 2, 2, 'F');
+        
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(211, 47, 47);
+        doc.text(nf.section, margin + 3, yPos + 6);
+        yPos += 12;
+        
+        nf.findings.forEach((finding, idx) => {
+          checkPageBreak(20);
+          
+          doc.setFontSize(9);
+          doc.setTextColor(44, 62, 80);
+          doc.setFont('helvetica', 'bold');
+          
+          const severityColor = finding.severity === 'No Cumple' ? [211, 47, 47] : [245, 124, 0];
+          doc.setTextColor(severityColor[0], severityColor[1], severityColor[2]);
+          doc.text(`[${finding.severity}]`, margin + 2, yPos);
+          
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(44, 62, 80);
+          const itemText = doc.splitTextToSize(finding.item, contentWidth - 35);
+          doc.text(itemText, margin + 30, yPos);
+          yPos += itemText.length * 4;
+          
+          if (finding.observation) {
+            doc.setFont('helvetica', 'italic');
+            doc.setTextColor(100, 100, 100);
+            const obsText = doc.splitTextToSize(`Observación: ${finding.observation}`, contentWidth - 32);
+            doc.text(obsText, margin + 30, yPos);
+            yPos += obsText.length * 4;
+          }
+          
+          yPos += 5;
+        });
+        
+        yPos += 5;
+      });
+      
+      addFooter();
+    }
+    
+    // ===== ANÁLISIS Y RECOMENDACIONES (AI) =====
+    doc.addPage();
+    pageNumber++;
+    yPos = margin;
+    
+    doc.setTextColor(30, 60, 114);
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text('ANÁLISIS Y RECOMENDACIONES', margin, yPos);
+    yPos += 10;
+    
+    doc.setDrawColor(102, 126, 234);
+    doc.line(margin, yPos, pageWidth - margin, yPos);
+    yPos += 10;
+    
+    doc.setFontSize(9);
+    doc.setTextColor(44, 62, 80);
+    doc.setFont('helvetica', 'normal');
+    
+    const analysisLines = doc.splitTextToSize(aiAnalysis, contentWidth);
+    
+    analysisLines.forEach(line => {
+      checkPageBreak(6);
+      doc.text(line, margin, yPos);
+      yPos += 5;
+    });
+    
+    addFooter();
+    
+    // ===== ANEXOS (EVIDENCIAS FOTOGRÁFICAS) =====
+    const evidenceItems = Object.keys(evidenceStore).filter(key => evidenceStore[key].length > 0);
+    
+    if (evidenceItems.length > 0) {
+      doc.addPage();
+      pageNumber++;
+      yPos = margin;
+      
+      doc.setTextColor(30, 60, 114);
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('ANEXOS: EVIDENCIA FOTOGRÁFICA', margin, yPos);
+      yPos += 10;
+      
+      doc.setDrawColor(102, 126, 234);
+      doc.line(margin, yPos, pageWidth - margin, yPos);
+      yPos += 10;
+      
+      let anexoCounter = 1;
+      
+      for (const itemId of evidenceItems) {
+        const evidence = evidenceStore[itemId];
+        
+        // Find item details
+        let itemText = '';
+        let sectionName = '';
+        
+        DATA.forEach(section => {
+          section.items.forEach((item, idx) => {
+            if (makeId(section.name, idx) === itemId) {
+              itemText = item;
+              sectionName = section.name;
+            }
+          });
+        });
+        
+        checkPageBreak(15);
+        
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(102, 126, 234);
+        doc.text(`Anexo ${anexoCounter}. ${sectionName}`, margin, yPos);
+        yPos += 6;
+        
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(44, 62, 80);
+        const itemLines = doc.splitTextToSize(itemText, contentWidth);
+        doc.text(itemLines, margin, yPos);
+        yPos += itemLines.length * 4 + 5;
+        
+        // Add photos (2 per row)
+        for (let i = 0; i < evidence.length; i += 2) {
+          checkPageBreak(70);
+          
+          const imgWidth = (contentWidth - 5) / 2;
+          const imgHeight = 60;
+          
+          try {
+            doc.addImage(evidence[i], 'JPEG', margin, yPos, imgWidth, imgHeight);
+            
+            if (evidence[i + 1]) {
+              doc.addImage(evidence[i + 1], 'JPEG', margin + imgWidth + 5, yPos, imgWidth, imgHeight);
+            }
+          } catch (error) {
+            console.warn('Error al insertar evidencia:', error);
+          }
+          
+          yPos += imgHeight + 8;
+        }
+        
+        yPos += 5;
+        anexoCounter++;
+      }
+      
+      addFooter();
+    }
+    
+    // ===== CONCLUSIÓN =====
+    doc.addPage();
+    pageNumber++;
+    yPos = margin;
+    
+    doc.setTextColor(30, 60, 114);
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text('CONCLUSIÓN', margin, yPos);
+    yPos += 10;
+    
+    doc.setDrawColor(102, 126, 234);
+    doc.line(margin, yPos, pageWidth - margin, yPos);
+    yPos += 10;
+    
+    const conclusionStatus = legendFor(finalPct);
+    let conclusionBgColor;
+    if (finalPct >= 92) conclusionBgColor = [76, 175, 80];
+    else if (finalPct >= 85) conclusionBgColor = [255, 152, 0];
+    else conclusionBgColor = [244, 67, 54];
+    
+    doc.setFillColor(conclusionBgColor[0], conclusionBgColor[1], conclusionBgColor[2]);
+    doc.roundedRect(margin + 10, yPos, contentWidth - 20, 50, 5, 5, 'F');
+    
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('RESULTADO FINAL DE AUDITORÍA', pageWidth / 2, yPos + 12, { align: 'center' });
+    
+    doc.setFontSize(36);
+    doc.text(`${finalPct}%`, pageWidth / 2, yPos + 30, { align: 'center' });
+    
+    doc.setFontSize(13);
+    doc.text(conclusionStatus.toUpperCase(), pageWidth / 2, yPos + 42, { align: 'center' });
+    
+    yPos += 60;
+    
+    doc.setFontSize(10);
+    doc.setTextColor(44, 62, 80);
+    doc.setFont('helvetica', 'normal');
+    
+    let conclusionText = '';
+    if (finalPct >= 92) {
+      conclusionText = `Se concluye que ${sede} alcanzó un porcentaje de cumplimiento de ${finalPct}%, lo que representa un RIESGO BAJO en la escala de resultados. La sede cumple satisfactoriamente con los criterios evaluados. Se genera seguimiento pero no se requiere plan de acción inmediato.`;
+    } else if (finalPct >= 85) {
+      conclusionText = `Se concluye que ${sede} alcanzó un porcentaje de cumplimiento de ${finalPct}%, lo que representa un RIESGO MEDIO en la escala de resultados. La sede cumple parcialmente con los criterios evaluados y se requiere plan de acción y seguimiento para mejorar las áreas identificadas.`;
+    } else {
+      conclusionText = `Se concluye que ${sede} alcanzó un porcentaje de cumplimiento de ${finalPct}%, lo que representa un RIESGO ALTO en la escala de resultados. Se requieren acciones de intervención inmediata y plan de mejoramiento a corto plazo para corregir las deficiencias identificadas.`;
+    }
+    
+    const conclusionLines = doc.splitTextToSize(conclusionText, contentWidth - 20);
+    doc.text(conclusionLines, margin + 10, yPos);
+    yPos += conclusionLines.length * 6 + 15;
+    
+    // Signature section
+    checkPageBreak(40);
+    
+    doc.setDrawColor(200, 200, 200);
+    doc.line(margin + 20, yPos, margin + 70, yPos);
+    doc.line(pageWidth - margin - 70, yPos, pageWidth - margin - 20, yPos);
+    
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(44, 62, 80);
+    doc.text(auditor, margin + 45, yPos + 6, { align: 'center' });
+    doc.setFont('helvetica', 'normal');
+    doc.text('Auditor', margin + 45, yPos + 11, { align: 'center' });
+    
+    doc.setFont('helvetica', 'bold');
+    doc.text('Valentina Jimeno Mejía', pageWidth - margin - 45, yPos + 6, { align: 'center' });
+    doc.setFont('helvetica', 'normal');
+    doc.text('Asistente de Calidad', pageWidth - margin - 45, yPos + 11, { align: 'center' });
+    
+    addFooter();
+    
+    // Save PDF
+    hideLoading();
+    const fileName = `Informe_Auditoria_${sede.replace(/\s+/g, '_')}_${fecha.replace(/-/g, '')}.pdf`;
+    doc.save(fileName);
+    
+    showNotification('Informe completo generado exitosamente', 'success');
+    
+  } catch (error) {
+    hideLoading();
+    console.error('Error al generar PDF del informe:', error);
+    showNotification('Error al generar el PDF: ' + error.message, 'error');
   }
 }
 
@@ -1422,6 +2602,14 @@ function resetForm() {
     const allObsInputs = document.querySelectorAll('.obs-input');
     allObsInputs.forEach(input => {
       input.value = '';
+    });
+    
+    evidenceStore = {};
+    
+    document.querySelectorAll('.evidence-btn').forEach(btn => {
+      btn.classList.remove('has-evidence');
+      const badge = btn.querySelector('.evidence-count');
+      if (badge) badge.remove();
     });
     
     computeResults();
@@ -1453,7 +2641,8 @@ async function guardarAuditoria() {
     const items = [];
     DATA.forEach(section => {
       section.items.forEach((item, idx) => {
-        const radios = document.getElementsByName(makeId(section.name, idx));
+        const itemId = makeId(section.name, idx);
+        const radios = document.getElementsByName(itemId);
         let valor = "";
         
         radios.forEach(r => {
@@ -1467,11 +2656,14 @@ async function guardarAuditoria() {
           if (obsInput) observacion = obsInput.value;
         }
         
+        const evidenceCount = evidenceStore[itemId] ? evidenceStore[itemId].length : 0;
+        
         items.push({
           categoria: section.name,
           item: item,
           resultado: valor || "Sin evaluar",
-          observacion: observacion
+          observacion: observacion,
+          evidencias: evidenceCount
         });
       });
     });
@@ -1515,7 +2707,8 @@ async function guardarAuditoria() {
 function initializeCharts() {
   const ctx1 = document.getElementById('categoryChart').getContext('2d');
   const ctx2 = document.getElementById('distributionChart').getContext('2d');
-const categoryColors = [
+
+  const categoryColors = [
     'rgba(30, 60, 114, 0.9)',
     'rgba(42, 82, 152, 0.9)',
     'rgba(33, 150, 243, 0.9)',
@@ -1616,16 +2809,16 @@ const categoryColors = [
       datasets: [{
         data: [0, 0, 0, 0],
         backgroundColor: [
-          'rgba(46, 125, 50, 0.85)',      // Verde oscuro elegante para C
-          'rgba(251, 192, 45, 0.85)',     // Amarillo dorado para CP
-          'rgba(211, 47, 47, 0.85)',      // Rojo elegante para NC
-          'rgba(66, 133, 244, 0.85)'      // Azul profesional para N/A
+          'rgba(46, 125, 50, 0.85)',
+          'rgba(251, 192, 45, 0.85)',
+          'rgba(211, 47, 47, 0.85)',
+          'rgba(66, 133, 244, 0.85)'
         ],
         borderColor: [
-          'rgba(46, 125, 50, 1)',         // Verde oscuro
-          'rgba(251, 192, 45, 1)',        // Amarillo dorado
-          'rgba(211, 47, 47, 1)',         // Rojo elegante
-          'rgba(66, 133, 244, 1)'         // Azul profesional
+          'rgba(46, 125, 50, 1)',
+          'rgba(251, 192, 45, 1)',
+          'rgba(211, 47, 47, 1)',
+          'rgba(66, 133, 244, 1)'
         ],
         borderWidth: 2
       }]
@@ -1686,7 +2879,6 @@ const categoryColors = [
                 ctx.textBaseline = 'middle';
                 
                 const position = element.tooltipPosition();
-                
                 ctx.fillText(dataString, position.x, position.y);
                 
                 ctx.shadowColor = 'transparent';
@@ -1733,6 +2925,9 @@ function updateCharts(results, finalPct) {
 
 // ==================== EVENT LISTENERS ====================
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('=== INICIANDO APLICACIÓN ===');
+  console.log('Versión: 2.0 - ' + new Date().toISOString());
+  
   renderChecklist();
   computeResults();
   initializeCharts();
@@ -1740,6 +2935,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('fecha').value = today;
   
+  document.getElementById('generate-report').addEventListener('click', generateComprehensiveReport);
   document.getElementById('export-pdf').addEventListener('click', exportToPDF);
   document.getElementById('save-audit').addEventListener('click', guardarAuditoria);
   document.getElementById('reset-form').addEventListener('click', resetForm);
@@ -1750,13 +2946,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
-  const metaInputs = document.querySelectorAll('.meta-field input');
+  const metaInputs = document.querySelectorAll('.meta-field input, .meta-field select');
   metaInputs.forEach(input => {
     input.addEventListener('change', computeResults);
   });
+
+  // Close modal when clicking outside
+  window.onclick = function(event) {
+    const modal = document.getElementById('evidenceModal');
+    if (event.target === modal) {
+      closeEvidenceModal();
+    }
+  };
 });
 
 </script>
 
 </body>
 </html>
+
