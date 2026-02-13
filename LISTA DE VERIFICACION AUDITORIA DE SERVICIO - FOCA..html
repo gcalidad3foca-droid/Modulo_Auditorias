@@ -1818,6 +1818,144 @@ async function exportToPDF() {
   }
 }
 
+function generateFallbackAnalysis(results, finalPct, noConformeFindings, sede) {
+  let analysis = '';
+  
+  // RESUMEN EJECUTIVO
+  analysis += '**RESUMEN EJECUTIVO**\n\n';
+  
+  if (finalPct >= 92) {
+    analysis += `La auditoría realizada en ${sede} evidencia un desempeño SOBRESALIENTE con una calificación del ${finalPct}%, clasificándose en RIESGO BAJO. Este resultado refleja un alto nivel de cumplimiento en los estándares de calidad evaluados, demostrando un compromiso institucional con la excelencia en la prestación de servicios de salud oftalmológica.\n\n`;
+    analysis += 'Los procesos auditados muestran solidez operativa y adherencia consistente a los protocolos establecidos. Se recomienda mantener los estándares alcanzados mediante monitoreo continuo y fortalecer las buenas prácticas identificadas.\n\n';
+  } else if (finalPct >= 85) {
+    analysis += `La auditoría realizada en ${sede} muestra un desempeño ACEPTABLE con una calificación del ${finalPct}%, clasificándose en RIESGO MEDIO. Si bien se evidencia cumplimiento en aspectos fundamentales, existen oportunidades de mejora que requieren atención para alcanzar la excelencia operativa.\n\n`;
+    analysis += 'Se han identificado áreas específicas que necesitan refuerzo y corrección. Es imperativo implementar un plan de acción enfocado en las deficiencias detectadas para elevar los estándares de calidad y reducir el nivel de riesgo.\n\n';
+  } else {
+    analysis += `La auditoría realizada en ${sede} revela un desempeño DEFICIENTE con una calificación del ${finalPct}%, clasificándose en RIESGO ALTO. Los resultados evidencian deficiencias críticas que comprometen la calidad del servicio y requieren intervención inmediata.\n\n`;
+    analysis += 'Es urgente implementar acciones correctivas de alto impacto. Se requiere un plan de mejoramiento integral a corto plazo con seguimiento estricto para garantizar la seguridad del paciente y el cumplimiento normativo.\n\n';
+  }
+  
+  // ANÁLISIS POR CATEGORÍA
+  analysis += '**ANÁLISIS DETALLADO POR CATEGORÍA**\n\n';
+  
+  results.forEach(result => {
+    analysis += `**${result.name}** - Resultado: ${result.percentage}%\n`;
+    
+    if (result.percentage >= 92) {
+      analysis += `FORTALEZA: Esta categoría muestra cumplimiento sobresaliente. Los procesos están bien establecidos y se ejecutan consistentemente. Se recomienda documentar las mejores prácticas para replicarlas en otras áreas.\n\n`;
+    } else if (result.percentage >= 85) {
+      analysis += `ÁREA DE OPORTUNIDAD: Aunque cumple los estándares mínimos, existen aspectos específicos que requieren atención. Se recomienda revisar los hallazgos no conformes y establecer acciones preventivas.\n\n`;
+    } else if (result.percentage >= 70) {
+      analysis += `REQUIERE ATENCIÓN: Esta categoría presenta deficiencias importantes que deben corregirse. Se recomienda implementar capacitación específica al personal y reforzar la supervisión de estos procesos.\n\n`;
+    } else {
+      analysis += `CRÍTICO: Esta categoría muestra deficiencias graves que requieren intervención urgente. Se debe implementar un plan de acción inmediato con seguimiento diario hasta alcanzar niveles aceptables de cumplimiento.\n\n`;
+    }
+  });
+  
+  // RECOMENDACIONES ESPECÍFICAS
+  analysis += '**RECOMENDACIONES ESPECÍFICAS**\n\n';
+  
+  if (noConformeFindings.length > 0) {
+    noConformeFindings.forEach((finding, idx) => {
+      analysis += `${idx + 1}. **${finding.section}**:\n`;
+      finding.findings.forEach(f => {
+        analysis += `   • ${f.item}\n`;
+        if (f.observation) {
+          analysis += `     Observación: ${f.observation}\n`;
+        }
+        
+        // Generate specific recommendation based on the finding
+        if (f.item.includes('lavado de manos')) {
+          analysis += `     Recomendación: Reforzar capacitación en técnica de lavado de manos según protocolo OMS. Implementar auditorías semanales de cumplimiento.\n`;
+        } else if (f.item.includes('rotula')) {
+          analysis += `     Recomendación: Establecer procedimiento operativo estándar para rotulación de medicamentos e insumos. Designar responsable de verificación diaria.\n`;
+        } else if (f.item.includes('señalética') || f.item.includes('señalización')) {
+          analysis += `     Recomendación: Completar señalización faltante en un plazo máximo de 48 horas. Verificar visibilidad y ubicación estratégica.\n`;
+        } else if (f.item.includes('limpieza')) {
+          analysis += `     Recomendación: Revisar y actualizar cronograma de limpieza. Reforzar supervisión del personal de servicios generales.\n`;
+        } else if (f.item.includes('actualización de datos')) {
+          analysis += `     Recomendación: Capacitar al personal de admisión en la importancia de actualización de datos. Implementar checklist de verificación obligatoria.\n`;
+        } else if (f.item.includes('tiempo')) {
+          analysis += `     Recomendación: Optimizar flujo de pacientes y redistribuir carga laboral. Monitorear tiempos de atención semanalmente.\n`;
+        } else {
+          analysis += `     Recomendación: Implementar acción correctiva inmediata y verificar cumplimiento en próxima auditoría.\n`;
+        }
+      });
+      analysis += '\n';
+    });
+  }
+  
+  // PLAN DE ACCIÓN SUGERIDO
+  analysis += '**PLAN DE ACCIÓN SUGERIDO**\n\n';
+  
+  if (finalPct >= 92) {
+    analysis += '**CORTO PLAZO (1-2 semanas)**:\n';
+    analysis += '• Documentar buenas prácticas identificadas\n';
+    analysis += '• Socializar resultados con el equipo\n';
+    analysis += '• Mantener sistema de monitoreo continuo\n\n';
+    
+    analysis += '**MEDIANO PLAZO (1-3 meses)**:\n';
+    analysis += '• Implementar programa de reconocimiento al personal\n';
+    analysis += '• Desarrollar material educativo para nuevos ingresos\n';
+    analysis += '• Evaluar posibilidad de certificación de calidad\n\n';
+  } else if (finalPct >= 85) {
+    analysis += '**CORTO PLAZO (1-2 semanas)**:\n';
+    analysis += '• Corregir hallazgos no conformes identificados\n';
+    analysis += '• Capacitar personal en áreas deficientes\n';
+    analysis += '• Implementar supervisión reforzada\n\n';
+    
+    analysis += '**MEDIANO PLAZO (1-3 meses)**:\n';
+    analysis += '• Evaluar efectividad de acciones correctivas\n';
+    analysis += '• Realizar auditoría de seguimiento\n';
+    analysis += '• Actualizar procedimientos según necesidad\n\n';
+    
+    analysis += '**LARGO PLAZO (3-6 meses)**:\n';
+    analysis += '• Establecer cultura de mejora continua\n';
+    analysis += '• Implementar indicadores de calidad\n';
+    analysis += '• Alcanzar nivel de riesgo bajo\n\n';
+  } else {
+    analysis += '**INMEDIATO (1-3 días)**:\n';
+    analysis += '• Intervenir hallazgos críticos de seguridad del paciente\n';
+    analysis += '• Reunión urgente con equipo directivo\n';
+    analysis += '• Asignar responsables específicos por área\n\n';
+    
+    analysis += '**CORTO PLAZO (1-2 semanas)**:\n';
+    analysis += '• Capacitación intensiva al personal\n';
+    analysis += '• Implementar supervisión diaria\n';
+    analysis += '• Corregir el 80% de hallazgos no conformes\n\n';
+    
+    analysis += '**MEDIANO PLAZO (1-3 meses)**:\n';
+    analysis += '• Alcanzar nivel mínimo de 85% de cumplimiento\n';
+    analysis += '• Auditorías semanales de seguimiento\n';
+    analysis += '• Reestructurar procesos deficientes\n\n';
+  }
+  
+  // OPORTUNIDADES DE MEJORA
+  analysis += '**OPORTUNIDADES DE MEJORA IDENTIFICADAS**\n\n';
+  
+  const lowPerformers = results.filter(r => r.percentage < 85);
+  if (lowPerformers.length > 0) {
+    lowPerformers.forEach(lp => {
+      analysis += `• **${lp.name}**: Con ${lp.percentage}% de cumplimiento, esta categoría requiere atención prioritaria. Se sugiere implementar programa de mejora específico con metas medibles y cronograma definido.\n`;
+    });
+  } else {
+    analysis += '• Todas las categorías cumplen estándares mínimos. Se recomienda enfoque en mantener y mejorar continuamente los procesos establecidos.\n';
+  }
+  
+  analysis += '\n**CONCLUSIÓN**\n\n';
+  analysis += `Los resultados de esta auditoría proporcionan una fotografía clara del estado actual de ${sede}. `;
+  
+  if (finalPct >= 92) {
+    analysis += 'El alto nivel de cumplimiento alcanzado es testimonio del compromiso del equipo con la calidad. Se recomienda continuar con este nivel de excelencia y compartir las mejores prácticas con otras sedes de la organización.';
+  } else if (finalPct >= 85) {
+    analysis += 'Aunque se cumplen los estándares básicos, existe un margen importante para la mejora. Con implementación oportuna de las recomendaciones, la sede puede alcanzar niveles de excelencia en el corto plazo.';
+  } else {
+    analysis += 'Los hallazgos requieren atención inmediata y decidida. Es fundamental el compromiso de la dirección y del equipo completo para implementar las acciones correctivas necesarias y garantizar la seguridad y satisfacción de nuestros pacientes.';
+  }
+  
+  return analysis;
+}
+
 async function generateComprehensiveReport() {
   try {
     const fecha = document.getElementById('fecha').value;
@@ -1921,27 +2059,45 @@ Por favor genera:
 El tono debe ser profesional, objetivo y constructivo.`;
 
     // Call Claude API for analysis
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 4000,
-        messages: [
-          { role: "user", content: analysisPrompt }
-        ],
-      })
-    });
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "anthropic-version": "2023-06-01"
+        },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 4000,
+          messages: [
+            { role: "user", content: analysisPrompt }
+          ]
+        })
+      });
 
-    const data = await response.json();
-    const aiAnalysis = data.content.find(item => item.type === "text")?.text || "No se pudo generar el análisis";
-    
-    hideLoading();
-    
-    // Generate comprehensive PDF report
-    await generatePDFReport(fecha, sede, auditor, results, finalPct, conformeFindings, noConformeFindings, aiAnalysis);
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.content && data.content.length > 0) {
+        const aiAnalysis = data.content.find(item => item.type === "text")?.text || generateFallbackAnalysis(results, finalPct, noConformeFindings, sede);
+        
+        hideLoading();
+        await generatePDFReport(fecha, sede, auditor, results, finalPct, conformeFindings, noConformeFindings, aiAnalysis);
+      } else {
+        throw new Error("No se recibió contenido de la API");
+      }
+    } catch (apiError) {
+      console.error('Error en API:', apiError);
+      showNotification('Generando informe sin análisis IA...', 'info');
+      
+      // Fallback: Generate report with local analysis
+      const fallbackAnalysis = generateFallbackAnalysis(results, finalPct, noConformeFindings, sede);
+      hideLoading();
+      await generatePDFReport(fecha, sede, auditor, results, finalPct, conformeFindings, noConformeFindings, fallbackAnalysis);
+    }
     
   } catch (error) {
     hideLoading();
@@ -2964,4 +3120,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
-
