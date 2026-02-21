@@ -24,7 +24,6 @@
     position: relative;
   }
   
-  /* Efecto de profundidad con partículas sutiles */
   .background-effect {
     position: fixed;
     top: 0;
@@ -39,7 +38,6 @@
     z-index: 0;
   }
   
-  /* CONTENEDOR PRINCIPAL - PANTALLA COMPLETA */
   .main-container {
     height: 100vh;
     display: flex;
@@ -48,9 +46,6 @@
     z-index: 1;
   }
   
-  /* ============================================
-     HEADER ÉPICO - ESTILO STEVE JOBS
-     ============================================ */
   .header {
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(20px);
@@ -65,7 +60,6 @@
     flex-shrink: 0;
   }
   
-  /* Barra superior azul premium con toque de turquesa */
   .header::before {
     content: '';
     position: absolute;
@@ -165,7 +159,6 @@
     margin-top: -2px;
   }
   
-  /* Separador vertical */
   .divider {
     width: 1px;
     height: 35px;
@@ -201,9 +194,6 @@
     color: #2d3748;
   }
   
-  /* ============================================
-     SECCIÓN PRINCIPAL - PANTALLA COMPLETA
-     ============================================ */
   .main-content {
     flex: 1;
     display: grid;
@@ -213,7 +203,6 @@
     min-height: 0;
   }
   
-  /* PANEL LATERAL IZQUIERDO */
   .sidebar {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
@@ -322,7 +311,6 @@
     padding-left: 40px;
   }
   
-  /* ÁREA DE CONTENIDO PRINCIPAL - EXPANSIVA */
   .content-area {
     background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
     padding: 30px 40px;
@@ -362,7 +350,6 @@
     display: none;
   }
   
-  /* GRID DE TARJETAS - EXPANSIVO */
   .cards-container {
     flex: 1;
     display: flex;
@@ -381,7 +368,7 @@
     align-items: start;
   }
   
-  /* TARJETAS PREMIUM - COMPACTAS Y VISIBLES */
+  /* TARJETAS */
   .audit-card {
     background: white;
     border-radius: 18px;
@@ -411,7 +398,6 @@
     transition: opacity 0.5s ease;
   }
   
-  /* Acento de color sutil en la parte superior de cada tarjeta */
   .audit-card::after {
     content: '';
     position: absolute;
@@ -423,7 +409,6 @@
     transition: opacity 0.5s ease;
   }
   
-  /* FOCA - Azul profundo con toque violeta */
   .audit-card.foca::before {
     background: linear-gradient(135deg, #5B8CD6 0%, #7B68EE 100%);
   }
@@ -445,7 +430,6 @@
     opacity: 1;
   }
   
-  /* VIU - Azul claro con toque turquesa */
   .audit-card.viu::before {
     background: linear-gradient(135deg, #86C5DA 0%, #4DD0E1 100%);
   }
@@ -471,78 +455,74 @@
     text-align: center;
     margin-bottom: 20px;
   }
-  
-  .card-icon {
-    width: 65px;
-    height: 65px;
+
+  /* ============================================
+     LOGO CONTAINER - REEMPLAZA card-icon
+     ============================================ */
+  .card-logo-container {
+    width: 100%;
+    height: 110px;
     margin: 0 auto 16px;
-    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 30px;
-    color: white;
-    position: relative;
+    padding: 10px 20px;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1.5px solid #f0f4f8;
     transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
   }
-  
-  .card-icon::after {
+
+  .card-logo-container::before {
     content: '';
     position: absolute;
-    width: 85px;
-    height: 85px;
-    border-radius: 50%;
-    border: 3px solid;
-    opacity: 0;
-    transition: all 0.5s ease;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 100%);
+    border-radius: 12px;
   }
-  
-  .audit-card:hover .card-icon {
-    transform: scale(1.1) rotate(5deg);
+
+  .audit-card.foca .card-logo-container {
+    background: linear-gradient(135deg, #f0f5ff 0%, #f8faff 100%);
+    border-color: rgba(91, 140, 214, 0.15);
   }
-  
-  .audit-card:hover .card-icon::after {
-    opacity: 0.2;
-    transform: scale(1.3);
+
+  .audit-card.viu .card-logo-container {
+    background: linear-gradient(135deg, #f0fafd 0%, #f8fdff 100%);
+    border-color: rgba(134, 197, 218, 0.15);
   }
-  
-  .card-icon.foca {
-    background: linear-gradient(135deg, #5B8CD6 0%, #7B68EE 100%);
-    box-shadow: 0 15px 40px rgba(91, 140, 214, 0.4);
+
+  .audit-card:hover .card-logo-container {
+    transform: scale(1.03);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
   }
-  
-  .card-icon.foca::after {
-    border-color: #5B8CD6;
+
+  .audit-card.foca:hover .card-logo-container {
+    border-color: rgba(91, 140, 214, 0.3);
+    box-shadow: 0 8px 30px rgba(91, 140, 214, 0.12);
   }
-  
-  .card-icon.viu {
-    background: linear-gradient(135deg, #86C5DA 0%, #4DD0E1 100%);
-    box-shadow: 0 15px 40px rgba(134, 197, 218, 0.4);
+
+  .audit-card.viu:hover .card-logo-container {
+    border-color: rgba(134, 197, 218, 0.3);
+    box-shadow: 0 8px 30px rgba(134, 197, 218, 0.12);
   }
-  
-  .card-icon.viu::after {
-    border-color: #86C5DA;
-  }
-  
-  .card-title {
-    font-size: 46px;
-    font-weight: 900;
-    letter-spacing: -1.5px;
-    margin-bottom: 10px;
-  }
-  
-  .card-title.foca {
-    background: linear-gradient(135deg, #5B8CD6 0%, #7B68EE 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  
-  .card-title.viu {
-    background: linear-gradient(135deg, #86C5DA 0%, #4DD0E1 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+
+  .card-logo-img {
+    max-width: 100%;
+    max-height: 90px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    position: relative;
+    z-index: 1;
+    /* Imagen nítida y definida */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    filter: none;
   }
   
   .card-description {
@@ -685,7 +665,6 @@
     transform: translateY(-2px);
   }
   
-  /* FOOTER */
   .footer {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
@@ -701,7 +680,6 @@
     font-weight: 500;
   }
   
-  /* SCROLLBAR */
   .content-area::-webkit-scrollbar,
   .sidebar::-webkit-scrollbar {
     width: 6px;
@@ -723,264 +701,68 @@
     background: linear-gradient(135deg, #4976c7 0%, #6FB4CC 100%);
   }
   
-  /* ============================================
-     RESPONSIVE - OPTIMIZADO MÓVIL
-     ============================================ */
-  
-  /* Pantallas grandes */
   @media (min-width: 1600px) {
-    .cards-grid {
-      gap: 40px;
-    }
-    
-    .card-title {
-      font-size: 52px;
-    }
-    
-    .card-icon {
-      width: 75px;
-      height: 75px;
-      font-size: 35px;
-    }
+    .cards-grid { gap: 40px; }
+    .card-logo-container { height: 130px; }
   }
   
-  /* Laptops medianas */
   @media (max-width: 1400px) {
-    .main-content {
-      grid-template-columns: 280px 1fr;
-    }
-    
-    .sidebar {
-      padding: 25px 20px;
-    }
-    
-    .content-area {
-      padding: 25px 30px;
-    }
-    
-    .cards-grid {
-      grid-template-columns: repeat(2, minmax(0, 450px));
-      gap: 25px;
-    }
-    
-    .card-title {
-      font-size: 42px;
-    }
+    .main-content { grid-template-columns: 280px 1fr; }
+    .sidebar { padding: 25px 20px; }
+    .content-area { padding: 25px 30px; }
+    .cards-grid { grid-template-columns: repeat(2, minmax(0, 450px)); gap: 25px; }
   }
   
-  /* Laptops pequeñas */
   @media (max-width: 1200px) {
-    .cards-grid {
-      grid-template-columns: 1fr;
-      max-width: 550px;
-    }
+    .cards-grid { grid-template-columns: 1fr; max-width: 550px; }
   }
   
-  /* Tablets */
   @media (max-width: 1024px) {
-    .main-content {
-      grid-template-columns: 1fr;
-      overflow-y: auto;
-    }
-    
-    .sidebar {
-      border-right: none;
-      border-bottom: 1px solid rgba(91, 140, 214, 0.15);
-      padding: 30px 25px;
-    }
-    
-    .content-area {
-      padding: 30px 30px;
-      overflow-y: visible;
-    }
-    
-    .content-title {
-      font-size: 36px;
-    }
-    
-    .cards-grid {
-      grid-template-columns: 1fr;
-    }
+    .main-content { grid-template-columns: 1fr; overflow-y: auto; }
+    .sidebar { border-right: none; border-bottom: 1px solid rgba(91, 140, 214, 0.15); padding: 30px 25px; }
+    .content-area { padding: 30px 30px; overflow-y: visible; }
+    .content-title { font-size: 36px; }
+    .cards-grid { grid-template-columns: 1fr; }
   }
   
-  /* MÓVILES */
   @media (max-width: 768px) {
-    html, body {
-      height: auto;
-      overflow-y: auto;
-    }
-    
-    .main-container {
-      height: auto;
-      min-height: 100vh;
-    }
-    
-    .header {
-      height: auto;
-      padding: 18px 5%;
-    }
-    
-    .header-content {
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    
-    .logo-section {
-      gap: 12px;
-    }
-    
-    .logo {
-      width: 45px;
-      height: 45px;
-    }
-    
-    .logo img {
-      width: 26px;
-      height: 26px;
-    }
-    
-    .brand-name {
-      font-size: 22px;
-    }
-    
-    .brand-tagline {
-      font-size: 9px;
-    }
-    
-    .divider {
-      display: none;
-    }
-    
-    .nav-info {
-      width: 100%;
-    }
-    
-    .nav-badge {
-      width: 100%;
-      justify-content: center;
-      padding: 10px 16px;
-    }
-    
-    .nav-badge-text {
-      font-size: 12px;
-    }
-    
-    /* CAMBIO DE ORDEN EN MÓVIL */
-    .main-content {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .content-area {
-      order: 1;
-      padding: 30px 20px;
-    }
-    
-    .content-header {
-      margin-bottom: 28px;
-    }
-    
-    .content-supertitle {
-      font-size: 10px;
-      letter-spacing: 2px;
-    }
-    
-    .content-title {
-      font-size: 32px;
-    }
-    
-    .content-subtitle {
-      font-size: 13px;
-    }
-    
-    .cards-container {
-      align-items: flex-start;
-    }
-    
-    .cards-grid {
-      gap: 20px;
-    }
-    
-    .audit-card {
-      padding: 24px 22px;
-    }
-    
-    .card-icon {
-      width: 60px;
-      height: 60px;
-      font-size: 28px;
-      margin-bottom: 14px;
-    }
-    
-    .card-title {
-      font-size: 40px;
-    }
-    
-    .card-description {
-      font-size: 12px;
-    }
-    
-    .card-label {
-      font-size: 9px;
-      padding: 5px 11px;
-      margin-bottom: 18px;
-    }
-    
-    .card-features {
-      gap: 7px;
-      margin-bottom: 18px;
-    }
-    
-    .feature-item {
-      font-size: 11px;
-    }
-    
-    .card-button {
-      padding: 13px;
-      font-size: 11px;
-    }
-    
-    .sidebar {
-      order: 2;
-      padding: 30px 20px;
-      border-top: 1px solid rgba(91, 140, 214, 0.15);
-      border-bottom: none;
-    }
-    
-    .sidebar-title {
-      justify-content: center;
-    }
-    
-    .sidebar-subtitle {
-      font-size: 20px;
-      text-align: center;
-    }
-    
-    .sidebar-description {
-      text-align: center;
-    }
-    
-    .footer {
-      padding: 16px 5%;
-    }
-    
-    .footer-content {
-      font-size: 10px;
-      line-height: 1.5;
-    }
+    html, body { height: auto; overflow-y: auto; }
+    .main-container { height: auto; min-height: 100vh; }
+    .header { height: auto; padding: 18px 5%; }
+    .header-content { flex-wrap: wrap; gap: 12px; }
+    .logo-section { gap: 12px; }
+    .logo { width: 45px; height: 45px; }
+    .logo img { width: 26px; height: 26px; }
+    .brand-name { font-size: 22px; }
+    .brand-tagline { font-size: 9px; }
+    .divider { display: none; }
+    .nav-info { width: 100%; }
+    .nav-badge { width: 100%; justify-content: center; padding: 10px 16px; }
+    .nav-badge-text { font-size: 12px; }
+    .main-content { display: flex; flex-direction: column; }
+    .content-area { order: 1; padding: 30px 20px; }
+    .content-header { margin-bottom: 28px; }
+    .content-supertitle { font-size: 10px; letter-spacing: 2px; }
+    .content-title { font-size: 32px; }
+    .cards-container { align-items: flex-start; }
+    .cards-grid { gap: 20px; }
+    .audit-card { padding: 24px 22px; }
+    .card-logo-container { height: 90px; }
+    .card-description { font-size: 12px; }
+    .card-label { font-size: 9px; padding: 5px 11px; margin-bottom: 18px; }
+    .card-features { gap: 7px; margin-bottom: 18px; }
+    .feature-item { font-size: 11px; }
+    .card-button { padding: 13px; font-size: 11px; }
+    .sidebar { order: 2; padding: 30px 20px; border-top: 1px solid rgba(91, 140, 214, 0.15); border-bottom: none; }
+    .sidebar-title { justify-content: center; }
+    .sidebar-subtitle { font-size: 20px; text-align: center; }
+    .sidebar-description { text-align: center; }
+    .footer { padding: 16px 5%; }
+    .footer-content { font-size: 10px; line-height: 1.5; }
   }
   
-  /* Móviles pequeños */
   @media (max-width: 480px) {
-    .card-title {
-      font-size: 36px;
-    }
-    
-    .card-icon {
-      width: 55px;
-      height: 55px;
-      font-size: 26px;
-    }
+    .card-logo-container { height: 80px; }
   }
 </style>
 </head>
@@ -1074,9 +856,6 @@
         <div class="content-header">
           <div class="content-supertitle">Seleccione la lista de verificación</div>
           <h1 class="content-title">Instituciones</h1>
-          <p class="content-subtitle">
-            Acceda a la lista de verificación de auditoría de servicio correspondiente a cada institución oftalmológica
-          </p>
         </div>
         
         <div class="cards-container">
@@ -1085,10 +864,15 @@
             <!-- TARJETA FOCA -->
             <article class="audit-card foca">
               <div class="card-header">
-                <div class="card-icon foca">
-                  <i class="fas fa-hospital"></i>
+                <!-- LOGO FOCA -->
+                <div class="card-logo-container">
+                  <img 
+                    src="https://i.imgur.com/5pNuFBp.png" 
+                    alt="Logo FOCA - Fundación Oftalmológica del Caribe"
+                    class="card-logo-img"
+                    loading="eager"
+                  >
                 </div>
-                <h2 class="card-title foca">FOCA</h2>
                 <p class="card-description">
                   Fundación Oftalmológica del Caribe
                 </p>
@@ -1127,10 +911,15 @@
             <!-- TARJETA VIU -->
             <article class="audit-card viu">
               <div class="card-header">
-                <div class="card-icon viu">
-                  <i class="fas fa-eye"></i>
+                <!-- LOGO VIU -->
+                <div class="card-logo-container">
+                  <img 
+                    src="https://i.imgur.com/qQ4lN8v.png" 
+                    alt="Logo VIU - Clínica Oftalmológica Internacional"
+                    class="card-logo-img"
+                    loading="eager"
+                  >
                 </div>
-                <h2 class="card-title viu">VIU</h2>
                 <p class="card-description">
                   Clínica Oftalmológica Internacional
                 </p>
@@ -1193,9 +982,3 @@ function goToClinicalAudit() {
 
 </body>
 </html>
-
-
-
-
-
-
