@@ -1461,31 +1461,27 @@ async function generateFullReport(reportFecha, reportMes, auditorLider, oportuni
     doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(CT[0],CT[1],CT[2]);
     const cLines=doc.splitTextToSize(concText,CW-6);
     chk(cLines.length*5.2+8);
-    doc.text(cLines,M+3,yPos); yPos+=cLines.length*5.2+14;
+    doc.text(cLines,M+3,yPos); yPos+=cLines.length*5.2+6;
 
     // ── OPORTUNIDADES DE MEJORA (solo si las hay) ──────────────
     if(oportunidades && oportunidades.length > 0){
-      sectionBar('OPORTUNIDADES DE MEJORA', CO);
+      sectionBar('OPORTUNIDADES DE MEJORA', CB);
       oportunidades.forEach((om, idx)=>{
-        const omTxt = (idx+1)+'. '+om;
-        const omLines = doc.splitTextToSize(omTxt, CW-12);
-        chk(omLines.length*5+6);
-        // Bullet con número
-        doc.setFillColor(CO[0],CO[1],CO[2]);
+        const omLineas = doc.splitTextToSize(om.trim(), CW-12);
+        chk(omLineas.length*5+6);
+        doc.setFillColor(CB[0],CB[1],CB[2]);
         doc.circle(M+3.5, yPos+3, 2.8, 'F');
         doc.setTextColor(255,255,255); doc.setFontSize(6); doc.setFont('helvetica','bold');
         doc.text(String(idx+1), M+3.5, yPos+3.8, {align:'center'});
-        // Texto
         doc.setTextColor(CT[0],CT[1],CT[2]); doc.setFontSize(8.5); doc.setFont('helvetica','normal');
-        const omLineas = doc.splitTextToSize(om.trim(), CW-12);
         doc.text(omLineas, M+9, yPos+3);
         yPos += omLineas.length*5+5;
       });
-      yPos += 6;
+      yPos += 4;
     }
 
-    // Firma — solo el auditor asignado, centrada
-    chk(44);
+    // Firma — solo el auditor asignado, centrada y más pequeña para mejor resolución
+    chk(36);
 
     // Mapa de firmas por auditor
     const FIRMAS_MAP = {
@@ -1502,7 +1498,7 @@ async function generateFullReport(reportFecha, reportMes, auditorLider, oportuni
         try{
           const ext = firmaUrl.toLowerCase().endsWith('.jpeg') || firmaUrl.toLowerCase().endsWith('.jpg') ? 'JPEG' : 'PNG';
           const sigImg = await loadImageAsBase64(firmaUrl);
-          if(sigImg) doc.addImage(sigImg, ext, xStart, lineY-18, lineW, 16);
+          if(sigImg) doc.addImage(sigImg, ext, xStart+4, lineY-14, lineW-8, 12);
         }catch(e){}
       }
       doc.setDrawColor(180,190,210); doc.setLineWidth(0.4);
@@ -1513,11 +1509,11 @@ async function generateFullReport(reportFecha, reportMes, auditorLider, oportuni
       doc.text(AUDITORES_CARGOS[nombre]||'', xStart+lineW/2, lineY+11, {align:'center'});
     }
 
-    const sigW=65, sigY=yPos+22;
+    const sigW=45, sigY=yPos+18;
     const sigCentroX = (PW - sigW) / 2;
 
     await drawSignature(auditorAsignado, sigCentroX, sigY, sigW);
-    yPos=sigY+22;
+    yPos=sigY+18;
     addFooter();
 
     // ========================================
