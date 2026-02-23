@@ -57,11 +57,22 @@
   .obs-input:focus { outline: none; border-color: #667eea; }
 
   /* ===== EVIDENCE BUTTON ===== */
-  .evidence-cell { text-align: center; position: relative; }
-  .evidence-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(102,126,234,0.2); position: relative; }
+  .evidence-cell { text-align: center; vertical-align: middle; padding: 8px 4px; }
+  .evidence-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 0; width: 72px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(102,126,234,0.2); position: relative; }
   .evidence-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102,126,234,0.3); }
   .evidence-btn i { font-size: 14px; }
   .evidence-btn.has-evidence { background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%); box-shadow: 0 2px 8px rgba(76,175,80,0.2); }
+  .om-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 0; width: 58px; background: linear-gradient(135deg, #7c8ff0 0%, #9c6fd6 100%); color: white; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(124,143,240,0.2); position: relative; }
+  .om-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(124,143,240,0.3); }
+  .om-btn.has-om { background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%); box-shadow: 0 2px 8px rgba(76,175,80,0.2); }
+  .om-btn i { font-size: 14px; }
+  /* OM inline modal */
+  .om-inline-modal { display:none; position:fixed; z-index:1500; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); animation:fadeIn 0.2s ease; }
+  .om-inline-content { position:relative; background:#fff; margin:8% auto; border-radius:12px; width:90%; max-width:480px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,0.3); animation:slideIn 0.3s ease; }
+  .om-inline-header { background:linear-gradient(135deg,#1e3c72 0%,#2a5298 100%); color:white; padding:16px 20px; }
+  .om-inline-header h3 { margin:0 0 2px; font-size:15px; font-weight:700; }
+  .om-inline-header p { margin:0; font-size:11px; opacity:0.9; }
+  .om-inline-body { padding:18px 20px; }
   .evidence-count { position: absolute; top: -8px; right: -8px; background: #f44336; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
   /* ===== EVIDENCE MODAL ===== */
@@ -254,13 +265,14 @@
       <table id="checklist">
         <thead>
           <tr>
-            <th style="width:35%;">ASPECTOS A EVALUAR</th>
+            <th style="width:33%;">ASPECTOS A EVALUAR</th>
             <th style="width:7%;">C</th>
             <th style="width:7%;">CP</th>
             <th style="width:7%;">NC</th>
             <th style="width:7%;">N/A</th>
-            <th style="width:10%;">EVIDENCIA</th>
-            <th style="width:27%;">OBSERVACIONES</th>
+            <th style="width:9%;">EVIDENCIA</th>
+            <th style="width:9%;">OPT. MEJORA</th>
+            <th style="width:21%;">OBSERVACIONES</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
@@ -393,29 +405,28 @@
   </div>
 </div>
 
-<!-- ===== OPORTUNIDADES DE MEJORA MODAL ===== -->
-<div id="omModal" class="report-modal-overlay">
-  <div class="report-modal-content" style="max-width:540px;">
-    <div class="report-modal-header">
-      <h2><i class="fas fa-lightbulb" style="margin-right:8px;"></i>Oportunidades de Mejora</h2>
-      <p>Agregue las oportunidades de mejora identificadas durante la auditoría (opcional)</p>
+<!-- ===== OPORTUNIDADES DE MEJORA INLINE MODAL ===== -->
+<div id="omInlineModal" class="om-inline-modal">
+  <div class="om-inline-content">
+    <div class="om-inline-header">
+      <h3><i class="fas fa-lightbulb" style="margin-right:6px;"></i>Oportunidad de Mejora</h3>
+      <p id="om-inline-subtitle">Ítem seleccionado</p>
     </div>
-    <div class="report-modal-body">
-      <div id="om-lista" style="margin-bottom:12px;"></div>
+    <div class="om-inline-body">
+      <div id="om-inline-lista" style="margin-bottom:10px;max-height:160px;overflow-y:auto;"></div>
       <div style="display:flex;gap:8px;margin-bottom:8px;">
-        <input type="text" id="om-input" placeholder="Escriba una oportunidad de mejora..." maxlength="300"
-          style="flex:1;padding:10px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:13px;font-family:inherit;"
-          onkeydown="if(event.key==='Enter'){event.preventDefault();omAgregar();}">
-        <button onclick="omAgregar()" style="padding:10px 16px;background:#1e3c72;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap;">
+        <textarea id="om-inline-input" placeholder="Escriba la oportunidad de mejora o recomendación..." rows="2" maxlength="400"
+          style="flex:1;padding:10px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:13px;font-family:inherit;resize:vertical;"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <button onclick="omInlineAgregar()" style="flex:1;padding:10px;background:#e65100;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;">
           <i class="fas fa-plus"></i> Agregar
         </button>
+        <button onclick="omInlineCerrar()" style="flex:1;padding:10px;background:#4caf50;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;">
+          <i class="fas fa-check"></i> Listo
+        </button>
       </div>
-      <p style="font-size:11px;color:#888;margin:0 0 14px;">Presione Enter o el botón para agregar. Si no hay oportunidades, haga clic en "Continuar sin agregar".</p>
-      <div class="report-modal-actions">
-        <button class="rmbtn rmbtn-cancel" onclick="omCancelar()">← Volver</button>
-        <button class="rmbtn" onclick="omFinalizar(false)" style="background:#607d8b;color:#fff;border:none;border-radius:8px;padding:10px 18px;cursor:pointer;font-size:13px;">Continuar sin agregar</button>
-        <button class="rmbtn rmbtn-generate" onclick="omFinalizar(true)"><i class="fas fa-file-pdf"></i> &nbsp;Generar Informe</button>
-      </div>
+      <button onclick="omInlineCerrar()" style="width:100%;padding:8px;background:#e0e0e0;color:#555;border:none;border-radius:8px;cursor:pointer;font-size:12px;">Cerrar sin guardar más</button>
     </div>
   </div>
 </div>
@@ -544,7 +555,7 @@ function renderChecklist() {
   DATA.forEach(section => {
     const trTitle = document.createElement('tr');
     const tdTitle = document.createElement('td');
-    tdTitle.colSpan = 7; tdTitle.className = 'section-title';
+    tdTitle.colSpan = 8; tdTitle.className = 'section-title';
     tdTitle.textContent = section.name;
     trTitle.appendChild(tdTitle); tbody.appendChild(trTitle);
 
@@ -563,6 +574,14 @@ function renderChecklist() {
       btn.onclick = () => openEvidenceModal(section.name, idx, text);
       btn.id = 'evidence-btn-' + itemId;
       tdEv.appendChild(btn); row.appendChild(tdEv);
+
+      const tdOm = document.createElement('td'); tdOm.className = 'evidence-cell';
+      const omBtn = document.createElement('button'); omBtn.className = 'om-btn';
+      omBtn.innerHTML = '<i class="fas fa-lightbulb"></i><span>OM</span>';
+      omBtn.onclick = () => openOmInlineModal(section.name, idx, text);
+      omBtn.id = 'om-btn-' + itemId;
+      tdOm.appendChild(omBtn); row.appendChild(tdOm);
+
       const tdObs = document.createElement('td');
       tdObs.innerHTML = '<input type="text" class="obs-input" placeholder="Observaciones...">';
       row.appendChild(tdObs); tbody.appendChild(row);
@@ -570,7 +589,7 @@ function renderChecklist() {
 
     const trRes = document.createElement('tr'); trRes.className = 'result-row';
     const tdLbl = document.createElement('td'); tdLbl.textContent = 'Resultado %';
-    const tdVal = document.createElement('td'); tdVal.colSpan = 6; tdVal.className = 'radio-cell';
+    const tdVal = document.createElement('td'); tdVal.colSpan = 7; tdVal.className = 'radio-cell';
     tdVal.id = 'result-' + makeId(section.name, 0); tdVal.textContent = '0%';
     trRes.appendChild(tdLbl); trRes.appendChild(tdVal); tbody.appendChild(trRes);
   });
@@ -713,62 +732,98 @@ function openReportModal() {
 }
 function closeReportModal(){ document.getElementById('reportModal').style.display='none'; }
 
-// ── Oportunidades de Mejora ──────────────────────────────────
-let _omItems = [];
-let _omReportData = {};
+// ── Oportunidades de Mejora por ítem ────────────────────────
+// omStore[itemId] = ["texto OM 1", "texto OM 2", ...]
+let omStore = {};
+let _currentOmItem = null;
+let _currentOmLabel = '';
 
-function executeGenerateReport(){
-  const rf=document.getElementById('report-fecha').value;
-  const rm=document.getElementById('report-mes').value;
-  const al=document.getElementById('report-auditor-lider').value;
-  if(!rf||!rm||!al){ showNotification('Complete todos los campos del informe','error'); return; }
-  // Guardar datos del informe y pasar al modal de OM
-  _omReportData = { rf, rm, al };
-  _omItems = [];
-  closeReportModal();
-  omRenderLista();
-  document.getElementById('om-input').value = '';
-  document.getElementById('omModal').style.display = 'block';
+function openOmInlineModal(sectionName, itemIdx, itemText) {
+  _currentOmItem = makeId(sectionName, itemIdx);
+  _currentOmLabel = itemText.substring(0, 70) + (itemText.length > 70 ? '…' : '');
+  document.getElementById('om-inline-subtitle').textContent = _currentOmLabel;
+  document.getElementById('om-inline-input').value = '';
+  omInlineRenderLista();
+  document.getElementById('omInlineModal').style.display = 'block';
+  setTimeout(()=>document.getElementById('om-inline-input').focus(), 100);
 }
 
-function omRenderLista(){
-  const cont = document.getElementById('om-lista');
-  if(_omItems.length === 0){
-    cont.innerHTML = '<p style="color:#aaa;font-size:12px;text-align:center;margin:0 0 8px;">No hay oportunidades de mejora agregadas aún.</p>';
+function omInlineRenderLista() {
+  const cont = document.getElementById('om-inline-lista');
+  const items = omStore[_currentOmItem] || [];
+  if (items.length === 0) {
+    cont.innerHTML = '<p style="color:#aaa;font-size:12px;text-align:center;margin:4px 0;">Sin oportunidades de mejora aún.</p>';
     return;
   }
-  cont.innerHTML = _omItems.map((txt,i)=>`
-    <div style="display:flex;align-items:flex-start;gap:8px;background:#f0f4ff;border-left:3px solid #1e3c72;border-radius:6px;padding:8px 10px;margin-bottom:6px;">
-      <span style="background:#1e3c72;color:#fff;border-radius:50%;min-width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">${i+1}</span>
+  cont.innerHTML = items.map((txt, i) => `
+    <div style="display:flex;align-items:flex-start;gap:8px;background:#fff8f0;border-left:3px solid #e65100;border-radius:6px;padding:7px 10px;margin-bottom:5px;">
+      <span style="background:#e65100;color:#fff;border-radius:50%;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;">${i+1}</span>
       <span style="flex:1;font-size:12px;color:#2c3e50;">${txt}</span>
-      <button onclick="omEliminar(${i})" style="background:none;border:none;cursor:pointer;color:#e53935;font-size:14px;padding:0;" title="Eliminar">✕</button>
+      <button onclick="omInlineEliminar(${i})" style="background:none;border:none;cursor:pointer;color:#e53935;font-size:13px;padding:0;" title="Eliminar">✕</button>
     </div>`).join('');
 }
 
-function omAgregar(){
-  const inp = document.getElementById('om-input');
+function omInlineAgregar() {
+  const inp = document.getElementById('om-inline-input');
   const txt = inp.value.trim();
-  if(!txt) return;
-  _omItems.push(txt);
+  if (!txt) return;
+  if (!omStore[_currentOmItem]) omStore[_currentOmItem] = [];
+  omStore[_currentOmItem].push(txt);
   inp.value = '';
-  omRenderLista();
+  omInlineRenderLista();
+  refreshOmButton(_currentOmItem);
   inp.focus();
 }
 
-function omEliminar(idx){
-  _omItems.splice(idx,1);
-  omRenderLista();
+function omInlineEliminar(idx) {
+  if (!_currentOmItem || !omStore[_currentOmItem]) return;
+  omStore[_currentOmItem].splice(idx, 1);
+  if (omStore[_currentOmItem].length === 0) delete omStore[_currentOmItem];
+  omInlineRenderLista();
+  refreshOmButton(_currentOmItem);
 }
 
-function omCancelar(){
-  document.getElementById('omModal').style.display='none';
-  document.getElementById('reportModal').style.display='block';
+function omInlineCerrar() {
+  document.getElementById('omInlineModal').style.display = 'none';
+  _currentOmItem = null;
 }
 
-async function omFinalizar(conOM){
-  document.getElementById('omModal').style.display='none';
-  const omsParaInforme = conOM ? [..._omItems] : [];
-  await generateFullReport(_omReportData.rf, _omReportData.rm, _omReportData.al, omsParaInforme);
+function refreshOmButton(itemId) {
+  const btn = document.getElementById('om-btn-' + itemId);
+  if (!btn) return;
+  const count = (omStore[itemId] || []).length;
+  if (count > 0) {
+    btn.classList.add('has-om');
+    btn.innerHTML = `<i class="fas fa-lightbulb"></i><span>OM (${count})</span>`;
+  } else {
+    btn.classList.remove('has-om');
+    btn.innerHTML = '<i class="fas fa-lightbulb"></i><span>OM</span>';
+  }
+}
+
+// Recoger todas las OMs del store en orden para el informe
+function collectAllOMs() {
+  const result = [];
+  DATA.forEach(section => {
+    section.items.forEach((item, idx) => {
+      const itemId = makeId(section.name, idx);
+      if (omStore[itemId] && omStore[itemId].length > 0) {
+        omStore[itemId].forEach(om => result.push(om));
+      }
+    });
+  });
+  return result;
+}
+
+function executeGenerateReport(){
+  const rf = document.getElementById('report-fecha').value;
+  const rm = document.getElementById('report-mes').value;
+  const al = document.getElementById('report-auditor-lider').value;
+  if (!rf || !rm || !al) { showNotification('Complete todos los campos del informe', 'error'); return; }
+  closeReportModal();
+  // Recoger OMs directamente del store — sin modal intermedio
+  const omsParaInforme = collectAllOMs();
+  generateFullReport(rf, rm, al, omsParaInforme);
 }
 
 // ============================================================
@@ -1658,7 +1713,9 @@ function resetForm(){
   document.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);
   document.querySelectorAll('.obs-input').forEach(i=>i.value='');
   evidenceStore={};
+  omStore={};
   document.querySelectorAll('.evidence-btn').forEach(btn=>{ btn.classList.remove('has-evidence'); const b=btn.querySelector('.evidence-count'); if(b)b.remove(); });
+  document.querySelectorAll('.om-btn').forEach(btn=>{ btn.classList.remove('has-om'); btn.innerHTML='<i class="fas fa-lightbulb"></i><span>OM</span>'; });
   computeResults();
   window.scrollTo({top:0,behavior:'smooth'});
   showNotification('Formulario restablecido','success');
@@ -1684,13 +1741,14 @@ async function guardarAuditoria(){
         let obs='';
         if(radios.length>0){ const fila=radios[0].closest('tr'); const oi=fila?fila.querySelector('.obs-input'):null; if(oi) obs=oi.value; }
         const evCount=evidenceStore[itemId]?evidenceStore[itemId].length:0;
-        items.push({categoria:section.name,item,resultado:valor||'Sin evaluar',observacion:obs,evidencias:evCount});
+        const oportunidades=omStore[itemId]||[];
+        items.push({categoria:section.name,item,resultado:valor||'Sin evaluar',observacion:obs,evidencias:evCount,oportunidades});
       });
     });
     const fStr=fecha.replace(/-/g,'');
     const cons=Math.floor(Math.random()*10000).toString().padStart(4,'0');
     const auditID=`AuditoriaServicio-${fStr}-${cons}`;
-    const payload={id:auditID,fecha,sede,auditor,porcentaje_final:resultado.finalPct,estado:legendFor(resultado.finalPct),timestamp:new Date().toISOString(),items};
+    const payload={id:auditID,fecha,sede,auditor,porcentaje_final:resultado.finalPct,estado:legendFor(resultado.finalPct),timestamp:new Date().toISOString(),items,oportunidades_mejora:collectAllOMs()};
     await fetch('https://script.google.com/macros/s/AKfycby9YVrSoK38cY8z8zOB-dnzrFdgbsQwWbAIQnMtyQS1TH-7PQ7CLEbV63GKK633Gl-_OQ/exec',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     showNotification(`✔ Auditoría guardada – ID: ${auditID}`,'success');
   }catch(e){ showNotification('Error al guardar: '+e.message,'error'); }
@@ -1731,7 +1789,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('reset-form').addEventListener('click',resetForm);
   document.body.addEventListener('change',e=>{ if(e.target.type==='radio'||e.target.classList.contains('obs-input')) computeResults(); });
   document.querySelectorAll('.meta-field input,.meta-field select').forEach(el=>el.addEventListener('change',computeResults));
-  window.onclick=e=>{ if(e.target===document.getElementById('evidenceModal')) closeEvidenceModal(); if(e.target===document.getElementById('reportModal')) closeReportModal(); if(e.target===document.getElementById('omModal')) omCancelar(); };
+  window.onclick=e=>{ if(e.target===document.getElementById('evidenceModal')) closeEvidenceModal(); if(e.target===document.getElementById('reportModal')) closeReportModal(); if(e.target===document.getElementById('omInlineModal')) omInlineCerrar(); };
 });
 </script>
 </body>
