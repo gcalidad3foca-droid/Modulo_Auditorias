@@ -618,6 +618,7 @@ function handleEvidenceUpload(event) {
       evidenceStore[currentEvidenceItem].push({ dataUrl: e.target.result, title: '' });
       updateEvidencePreview();
       refreshEvidenceButton(currentEvidenceItem);
+      saveEvidenceToIDB(currentEvidenceItem);
     };
     reader.readAsDataURL(file);
   });
@@ -629,10 +630,12 @@ function removeEvidence(idx) {
   if (evidenceStore[currentEvidenceItem].length === 0) delete evidenceStore[currentEvidenceItem];
   updateEvidencePreview();
   refreshEvidenceButton(currentEvidenceItem);
+  saveEvidenceToIDB(currentEvidenceItem);
 }
 function saveTitleInStore(idx, val) {
   if (currentEvidenceItem && evidenceStore[currentEvidenceItem]) {
     evidenceStore[currentEvidenceItem][idx].title = val;
+    saveEvidenceToIDB(currentEvidenceItem);
   }
 }
 function updateEvidencePreview() {
@@ -772,6 +775,7 @@ function omInlineAgregar() {
   inp.value = '';
   omInlineRenderLista();
   refreshOmButton(_currentOmItem);
+  saveToLocalStorage();
   inp.focus();
 }
 
@@ -781,6 +785,7 @@ function omInlineEliminar(idx) {
   if (omStore[_currentOmItem].length === 0) delete omStore[_currentOmItem];
   omInlineRenderLista();
   refreshOmButton(_currentOmItem);
+  saveToLocalStorage();
 }
 
 function omInlineCerrar() {
@@ -1714,6 +1719,8 @@ function resetForm(){
   document.querySelectorAll('.obs-input').forEach(i=>i.value='');
   evidenceStore={};
   omStore={};
+  clearLocalStorage();
+  idbClear();
   document.querySelectorAll('.evidence-btn').forEach(btn=>{ btn.classList.remove('has-evidence'); const b=btn.querySelector('.evidence-count'); if(b)b.remove(); });
   document.querySelectorAll('.om-btn').forEach(btn=>{ btn.classList.remove('has-om'); btn.innerHTML='<i class="fas fa-lightbulb"></i><span>OM</span>'; });
   computeResults();
@@ -1776,20 +1783,216 @@ function updateCharts(results,finalPct){
 }
 
 // ============================================================
-// INIT
+// PERSISTENCIA LOCAL — auto-guarda en localStorage en cada cambio
+// Funciona en Safari/iPhone al recargar o cerrar la pestaña
 // ============================================================
+const LS_KEY = 'foca_auditoria_draft';
+const IDB_NAME = 'foca_evidencias';
+const IDB_STORE = 'fotos';
+let _idb = null;
+
+// ── IndexedDB: abrir / inicializar ──────────────────────────
+function idbOpen() {
+  return new Promise((resolve, reject) => {
+    if (_idb) { resolve(_idb); return; }
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = e => {
+      e.target.result.createObjectStore(IDB_STORE);
+    };
+    req.onsuccess = e => { _idb = e.target.result; resolve(_idb); };
+    req.onerror   = e => reject(e.target.error);
+  });
+}
+
+async function idbSet(key, value) {
+  try {
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).put(value, key);
+      tx.oncomplete = resolve;
+      tx.onerror = e => reject(e.target.error);
+    });
+  } catch(e) { console.warn('idbSet error:', e); }
+}
+
+async function idbGet(key) {
+  try {
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const req = tx.objectStore(IDB_STORE).get(key);
+      req.onsuccess = e => resolve(e.target.result);
+      req.onerror   = e => reject(e.target.error);
+    });
+  } catch(e) { console.warn('idbGet error:', e); return null; }
+}
+
+async function idbDelete(key) {
+  try {
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).delete(key);
+      tx.oncomplete = resolve;
+      tx.onerror = e => reject(e.target.error);
+    });
+  } catch(e) { console.warn('idbDelete error:', e); }
+}
+
+async function idbClear() {
+  try {
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).clear();
+      tx.oncomplete = resolve;
+      tx.onerror = e => reject(e.target.error);
+    });
+  } catch(e) { console.warn('idbClear error:', e); }
+}
+
+// ── Guardar fotos de un ítem en IndexedDB ───────────────────
+async function saveEvidenceToIDB(itemId) {
+  const photos = evidenceStore[itemId];
+  if (photos && photos.length > 0) {
+    await idbSet('ev_' + itemId, photos);
+  } else {
+    await idbDelete('ev_' + itemId);
+  }
+}
+
+// ── Restaurar todas las fotos desde IndexedDB ───────────────
+async function restoreEvidenceFromIDB() {
+  try {
+    const db = await idbOpen();
+    const keys = await new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const req = tx.objectStore(IDB_STORE).getAllKeys();
+      req.onsuccess = e => resolve(e.target.result);
+      req.onerror   = e => reject(e.target.error);
+    });
+    for (const key of keys) {
+      if (!key.startsWith('ev_')) continue;
+      const itemId = key.replace('ev_', '');
+      const photos = await idbGet(key);
+      if (photos && photos.length > 0) {
+        evidenceStore[itemId] = photos;
+        refreshEvidenceButton(itemId);
+      }
+    }
+  } catch(e) { console.warn('restoreEvidence error:', e); }
+}
+
+function saveToLocalStorage() {
+  try {
+    const radios = {};
+    document.querySelectorAll('input[type="radio"]:checked').forEach(r => {
+      radios[r.name] = r.value;
+    });
+    const obs = {};
+    document.querySelectorAll('#tbody tr').forEach(row => {
+      const fc = row.cells && row.cells[0];
+      const oi = row.querySelector('.obs-input');
+      if (fc && oi && oi.value) obs[fc.textContent.trim()] = oi.value;
+    });
+    const draft = {
+      fecha:   document.getElementById('fecha').value,
+      sede:    document.getElementById('sede').value,
+      auditor: document.getElementById('auditor').value,
+      radios,
+      obs,
+      omStore: JSON.parse(JSON.stringify(omStore)),
+    };
+    localStorage.setItem(LS_KEY, JSON.stringify(draft));
+  } catch(e) { console.warn('Auto-save error:', e); }
+}
+
+function restoreFromLocalStorage() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return false;
+    const draft = JSON.parse(raw);
+
+    if (draft.fecha)   document.getElementById('fecha').value   = draft.fecha;
+    if (draft.sede)    document.getElementById('sede').value    = draft.sede;
+    if (draft.auditor) document.getElementById('auditor').value = draft.auditor;
+
+    if (draft.radios) {
+      Object.entries(draft.radios).forEach(([name, val]) => {
+        const r = document.querySelector(`input[name="${name}"][value="${val}"]`);
+        if (r) r.checked = true;
+      });
+    }
+
+    if (draft.obs) {
+      document.querySelectorAll('#tbody tr').forEach(row => {
+        const fc = row.cells && row.cells[0];
+        const oi = row.querySelector('.obs-input');
+        if (fc && oi && draft.obs[fc.textContent.trim()]) {
+          oi.value = draft.obs[fc.textContent.trim()];
+        }
+      });
+    }
+
+    if (draft.omStore) {
+      omStore = draft.omStore;
+      Object.keys(omStore).forEach(itemId => {
+        if (omStore[itemId] && omStore[itemId].length > 0) refreshOmButton(itemId);
+      });
+    }
+
+    return true;
+  } catch(e) { console.warn('Restore error:', e); return false; }
+}
+
+function clearLocalStorage() {
+  try { localStorage.removeItem(LS_KEY); } catch(e) {}
+}
+
 document.addEventListener('DOMContentLoaded',()=>{
   renderChecklist();
+
+  // Restaurar borrador si existe
+  const restored = restoreFromLocalStorage();
+  if (!restored) {
+    document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+  } else {
+    showNotification('Borrador restaurado automáticamente ✓', 'info');
+  }
+
+  // Restaurar fotos desde IndexedDB (async, no bloquea)
+  restoreEvidenceFromIDB();
+
   computeResults();
   initializeCharts();
-  document.getElementById('fecha').value=new Date().toISOString().split('T')[0];
-  document.getElementById('generate-report').addEventListener('click',openReportModal);
-  document.getElementById('export-pdf').addEventListener('click',exportToPDF);
-  document.getElementById('save-audit').addEventListener('click',guardarAuditoria);
-  document.getElementById('reset-form').addEventListener('click',resetForm);
-  document.body.addEventListener('change',e=>{ if(e.target.type==='radio'||e.target.classList.contains('obs-input')) computeResults(); });
-  document.querySelectorAll('.meta-field input,.meta-field select').forEach(el=>el.addEventListener('change',computeResults));
-  window.onclick=e=>{ if(e.target===document.getElementById('evidenceModal')) closeEvidenceModal(); if(e.target===document.getElementById('reportModal')) closeReportModal(); if(e.target===document.getElementById('omInlineModal')) omInlineCerrar(); };
+
+  document.getElementById('generate-report').addEventListener('click', openReportModal);
+  document.getElementById('export-pdf').addEventListener('click', exportToPDF);
+  document.getElementById('save-audit').addEventListener('click', guardarAuditoria);
+  document.getElementById('reset-form').addEventListener('click', resetForm);
+
+  // Auto-guardar en cada cambio de radio u observación
+  document.body.addEventListener('change', e => {
+    if (e.target.type === 'radio' || e.target.classList.contains('obs-input')) {
+      computeResults();
+      saveToLocalStorage();
+    }
+  });
+  // Auto-guardar al escribir en observaciones (input, no solo change)
+  document.body.addEventListener('input', e => {
+    if (e.target.classList.contains('obs-input')) saveToLocalStorage();
+  });
+  // Auto-guardar al cambiar campos meta
+  document.querySelectorAll('.meta-field input, .meta-field select').forEach(el => {
+    el.addEventListener('change', () => { computeResults(); saveToLocalStorage(); });
+  });
+
+  window.onclick = e => {
+    if (e.target === document.getElementById('evidenceModal')) closeEvidenceModal();
+    if (e.target === document.getElementById('reportModal')) closeReportModal();
+    if (e.target === document.getElementById('omInlineModal')) omInlineCerrar();
+  };
 });
 </script>
 </body>
