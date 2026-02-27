@@ -244,7 +244,6 @@
             <option>FOCA BARANOA</option><option>FOCA GALAPA</option>
             <option>FOCA SABANALARGA 1</option><option>FOCA SABANALARGA 2</option>
             <option>FOCA MALAMBO</option>
-<option>FOCA CASONA</option>
           </select>
         </div>
         <div class="meta-field">
@@ -1283,33 +1282,21 @@ async function generateFullReport(reportFecha, reportMes, auditorLider, oportuni
 
       if (!obsText) return base;
 
-      const baseClean = base.replace(/\.$/, '');
+      // Limpiar cualquier puntuación final de base (punto, coma, punto y coma)
+      const baseClean = base.replace(/[.;,\s]+$/, '');
       const obs = obsText.trim().replace(/^\s*[-–:]\s*/, '');
-      const obsLower = obs.charAt(0).toLowerCase() + obs.slice(1);
 
-      // Detectar si la observación ya trae conector propio
-      const yaConector = /^(debido|ya que|puesto que|por cuanto|dado que|se observó|se evidenció|se identificó|esto|lo anterior|sin embargo|no obstante)/i.test(obs);
-      if (yaConector) {
-        return baseClean + '; ' + obsLower;
-      }
+      // Alternar aleatoriamente entre punto y aparte y punto y coma
+      const usarPuntoYComa = Math.random() < 0.5;
 
-      if (isConforming) {
-        // Variedad de conectores positivos
-        const conectoresOk = [
-          ', destacando que ', ', evidenciándose además que ', '; se resalta que ',
-          ', lo cual se verificó a través de ', '. Adicionalmente, ',
-        ];
-        const c = conectoresOk[Math.floor(Math.random()*conectoresOk.length)];
-        return baseClean + c + obsLower;
+      if (usarPuntoYComa) {
+        // Punto y coma: obs en minúscula, sin punto final propio
+        const obsMin = obs.charAt(0).toLowerCase() + obs.slice(1).replace(/[.;,]+$/, '');
+        return baseClean + '; ' + obsMin + '.';
       } else {
-        // Variedad de conectores para no conformidades
-        const conectoresNc = [
-          ', dado que ', ', puesto que ', ', por cuanto ',
-          '; se identificó que ', ', toda vez que ', '. Al respecto, ',
-          ', situación que se evidenció en tanto que ',
-        ];
-        const c = conectoresNc[Math.floor(Math.random()*conectoresNc.length)];
-        return baseClean + c + obsLower;
+        // Punto y aparte: obs como oración nueva con mayúscula y punto
+        const obsFinal = obs.charAt(0).toUpperCase() + obs.slice(1).replace(/[.;,]+$/, '');
+        return baseClean + '. ' + obsFinal + '.';
       }
     }
 
@@ -1367,7 +1354,8 @@ async function generateFullReport(reportFecha, reportMes, auditorLider, oportuni
     // ========================================
     const evKeys=Object.keys(evidenceStore).filter(k=>evidenceStore[k].length>0);
     if(evKeys.length>0){
-      chk(18);
+      addFooter(); doc.addPage(); pageNum++;
+      drawPageHeader(); yPos=33;
       sectionBar('ANEXOS: EVIDENCIA FOTOGRÁFICA', CB);
 
       // Build ordered list: { sectionName, photos[] } preserving DATA order
@@ -1429,7 +1417,8 @@ async function generateFullReport(reportFecha, reportMes, auditorLider, oportuni
     // ========================================
     // 4) RESULTADOS POR CATEGORÍA
     // ========================================
-    chk(18);
+    addFooter(); doc.addPage(); pageNum++;
+    drawPageHeader(); yPos=33;
     sectionBar('RESULTADOS POR CATEGORÍA', CN);
     doc.autoTable({startY:yPos,
       head:[['Categoría / Proceso','Ponderación','Resultado','Clasificación de Riesgo']],
@@ -1570,7 +1559,7 @@ async function generateFullReport(reportFecha, reportMes, auditorLider, oportuni
       doc.text(AUDITORES_CARGOS[nombre]||'', xStart+lineW/2, lineY+11, {align:'center'});
     }
 
-    const sigW=45, sigY=yPos+18;
+    const sigW=45, sigY=yPos+10;
     const sigCentroX = (PW - sigW) / 2;
 
     await drawSignature(auditorAsignado, sigCentroX, sigY, sigW);
@@ -1998,3 +1987,4 @@ document.addEventListener('DOMContentLoaded',()=>{
 </script>
 </body>
 </html>
+
