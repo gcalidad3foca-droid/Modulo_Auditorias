@@ -92,6 +92,11 @@
   .upload-option-btn:hover { background: #eff3ff; border-color: #2a5298; transform: translateY(-2px); }
   .upload-option-btn i { font-size: 30px; color: #667eea; }
   .upload-option-btn input[type="file"] { display: none; }
+  /* Drag & drop zone */
+  .drop-zone { border: 2px dashed #667eea; border-radius: 12px; background: #f8f9fa; padding: 22px 16px; text-align: center; color: #1e3c72; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.25s ease; margin-bottom: 16px; }
+  .drop-zone i { font-size: 28px; color: #667eea; display: block; margin-bottom: 8px; }
+  .drop-zone span { display: block; font-size: 11px; color: #888; font-weight: 400; margin-top: 4px; }
+  .drop-zone.drag-over { background: #eff3ff; border-color: #2a5298; border-style: solid; transform: scale(1.01); box-shadow: 0 4px 16px rgba(102,126,234,0.2); }
 
   /* Evidence items with title field */
   .evidence-preview { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; margin-top: 4px; }
@@ -345,6 +350,12 @@
       <span class="close" onclick="closeEvidenceModal()">&times;</span>
     </div>
     <div class="modal-body">
+      <!-- Drag & drop zone -->
+      <div class="drop-zone" id="dropZone">
+        <i class="fas fa-cloud-upload-alt"></i>
+        Arrastra las fotos aquí
+        <span>o usa los botones de abajo · también puedes pegar (Ctrl+V)</span>
+      </div>
       <div class="upload-options">
         <!-- Camera (mobile: opens camera directly) -->
         <label class="upload-option-btn">
@@ -611,8 +622,15 @@ function closeEvidenceModal() {
 function handleEvidenceUpload(event) {
   const files = event.target.files;
   if (!files.length || !currentEvidenceItem) return;
+  processEvidenceFiles(files);
+  event.target.value = '';
+}
+
+// Procesa archivos tanto de input como de drag & drop
+function processEvidenceFiles(files) {
+  if (!currentEvidenceItem) return;
   if (!evidenceStore[currentEvidenceItem]) evidenceStore[currentEvidenceItem] = [];
-  Array.from(files).forEach(file => {
+  Array.from(files).filter(f => f.type.startsWith('image/')).forEach(file => {
     const reader = new FileReader();
     reader.onload = e => {
       evidenceStore[currentEvidenceItem].push({ dataUrl: e.target.result, title: '' });
@@ -622,7 +640,52 @@ function handleEvidenceUpload(event) {
     };
     reader.readAsDataURL(file);
   });
-  event.target.value = '';
+}
+
+// Drag & drop listeners — se inicializan una vez al cargar la página
+function initDropZone() {
+  const zone = document.getElementById('dropZone');
+  if (!zone) return;
+  zone.addEventListener('dragover', e => {
+    e.preventDefault(); e.stopPropagation();
+    zone.classList.add('drag-over');
+  });
+  zone.addEventListener('dragleave', e => {
+    e.preventDefault(); e.stopPropagation();
+    zone.classList.remove('drag-over');
+  });
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); e.stopPropagation();
+    zone.classList.remove('drag-over');
+    const files = e.dataTransfer.files;
+    if (files.length) processEvidenceFiles(files);
+  });
+  // Click en la zona también abre el selector de archivos
+  zone.addEventListener('click', () => {
+    const inp = document.createElement('input');
+    inp.type = 'file'; inp.accept = 'image/*'; inp.multiple = true;
+    inp.onchange = e => processEvidenceFiles(e.target.files);
+    inp.click();
+  });
+
+  // Pegar imágenes con Ctrl+V / Cmd+V cuando el modal está abierto
+  document.addEventListener('paste', e => {
+    const modal = document.getElementById('evidenceModal');
+    if (!modal || modal.style.display === 'none' || !currentEvidenceItem) return;
+    const items = e.clipboardData && e.clipboardData.items;
+    if (!items) return;
+    const imageFiles = [];
+    for (const item of items) {
+      if (item.type.startsWith('image/')) {
+        const file = item.getAsFile();
+        if (file) imageFiles.push(file);
+      }
+    }
+    if (imageFiles.length) {
+      e.preventDefault();
+      processEvidenceFiles(imageFiles);
+    }
+  });
 }
 function removeEvidence(idx) {
   if (!currentEvidenceItem) return;
@@ -974,13 +1037,13 @@ async function exportToPDF() {
       }
     }catch(e){ console.warn('Charts',e); }
 
-    // Page numbers
     const pc=doc.internal.getNumberOfPages();
     for(let i=1;i<=pc;i++){
-      doc.setPage(i); doc.setFontSize(8); doc.setTextColor(128,128,128); doc.setFont('helvetica','normal');
-      doc.text(`Página ${i} de ${pc}`,PW/2,PH-10,{align:'center'});
-      doc.text(`Generado: ${new Date().toLocaleDateString('es-CO')}`,PW-M,PH-10,{align:'right'});
+      doc.setPage(i);
+      doc.setFontSize(8); doc.setTextColor(128,128,128); doc.setFont('helvetica','normal');
+      doc.text(`Página ${i} de ${pc}`,PW/2,PH-5,{align:'center'});
     }
+
     doc.save(`Lista_Verificacion_${fecha.replace(/-/g,'')}_${sede.replace(/\s+/g,'_')}.pdf`);
     showNotification('PDF exportado exitosamente','success');
   } catch(e){ console.error(e); showNotification('Error al exportar: '+e.message,'error'); }
@@ -1064,12 +1127,8 @@ async function generateFullReport(reportFecha, reportMes, auditorLider, oportuni
       doc.text('Vigencia: 2026-19-01',PW-M,25,{align:'right'});
     }
     function addFooter(){
-      doc.setFontSize(7.5); doc.setTextColor(160,160,160); doc.setFont('helvetica','normal');
       doc.setDrawColor(220,220,220); doc.setLineWidth(0.3);
       doc.line(M,PH-14,PW-M,PH-14);
-      doc.text('Fundación Oftalmológica del Caribe – Informe de Auditoría de Servicio',M,PH-8);
-      doc.text(`Pág. ${pageNum}`,PW/2,PH-8,{align:'center'});
-      doc.text(new Date().toLocaleDateString('es-CO'),PW-M,PH-8,{align:'right'});
     }
     function newPage(){
       addFooter(); doc.addPage(); pageNum++;
@@ -1679,11 +1738,10 @@ async function generateFullReport(reportFecha, reportMes, auditorLider, oportuni
       }
     }catch(e){ console.warn('Charts L',e); }
 
-    // Page footers for all pages
     const totalPages=doc.internal.getNumberOfPages();
-    doc.setFontSize(8); doc.setTextColor(128,128,128); doc.setFont('helvetica','normal');
     for(let i=1;i<=totalPages;i++){
       doc.setPage(i);
+      doc.setFontSize(8); doc.setTextColor(128,128,128); doc.setFont('helvetica','normal');
       doc.text(`Página ${i} de ${totalPages}`,PW/2,PH-5,{align:'center'});
     }
 
@@ -1942,6 +2000,7 @@ function clearLocalStorage() {
 
 document.addEventListener('DOMContentLoaded',()=>{
   renderChecklist();
+  initDropZone();
 
   // Restaurar borrador si existe
   const restored = restoreFromLocalStorage();
@@ -1987,4 +2046,3 @@ document.addEventListener('DOMContentLoaded',()=>{
 </script>
 </body>
 </html>
-
