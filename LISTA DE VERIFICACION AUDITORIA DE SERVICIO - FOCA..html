@@ -1122,9 +1122,9 @@ async function generateFullReport(reportFecha, reportMes, auditorLider, oportuni
       // Metadatos en la franja inferior
       doc.setFontSize(7); doc.setFont('helvetica','normal');
       doc.setTextColor(180,200,240);
-      doc.text('Código: F-FSYM-823',M+22,25);
-      doc.text('Versión: 006',PW/2,25,{align:'center'});
-      doc.text('Vigencia: 2026-19-01',PW-M,25,{align:'right'});
+      doc.text('Código: F-FSYM-797',M+22,25);
+      doc.text('Versión: 004',PW/2,25,{align:'center'});
+      doc.text('Vigencia: 2022-08-08',PW-M,25,{align:'right'});
     }
     function addFooter(){
       doc.setDrawColor(220,220,220); doc.setLineWidth(0.3);
@@ -1156,7 +1156,7 @@ async function generateFullReport(reportFecha, reportMes, auditorLider, oportuni
       ['Auditor Líder:',auditorLider+'\n'+(AUDITORES_CARGOS[auditorLider]||''),'Auditor Asignado:',auditorAsignado+'\n'+(AUDITORES_CARGOS[auditorAsignado]||'')],
       ['Objetivo:','Verificar el cumplimiento de los diferentes procesos que tienen relación directa con la atención prestada al usuario en las áreas de admisión, prestación del servicio, seguridad del paciente, ambiente humanizado, PQRS y protocolo de imagen.',
         'Proceso(s) a auditar:',{content:'Atención Asistencial – Consulta Externa, Información y Atención al usuario – Calidad\n\nSede auditada: '+sede, styles:{fontStyle:'bold'}}],
-      ['Documentos\nAplicables:','Lista de Verificación de Auditoría de Servicio (F-FSYM-823)','','']
+      ['Documentos\nAplicables:','Lista de Verificación de Auditoría de Servicio (F-FSYM-797)','','']
     ], theme:'grid', styles:{fontSize:8,textColor:CT,cellPadding:3.5,lineWidth:0.2,lineColor:[210,218,230]},
     columnStyles:{0:{fontStyle:'bold',fillColor:[240,244,255],textColor:CN,cellWidth:38},1:{cellWidth:'auto'},2:{fontStyle:'bold',fillColor:[240,244,255],textColor:CN,cellWidth:38},3:{cellWidth:'auto'}},
     margin:{left:M,right:M}});
@@ -2046,3 +2046,4 @@ document.addEventListener('DOMContentLoaded',()=>{
 </script>
 </body>
 </html>
+
