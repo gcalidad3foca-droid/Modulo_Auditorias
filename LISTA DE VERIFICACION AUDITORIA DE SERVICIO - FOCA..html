@@ -982,66 +982,101 @@ async function exportToPDF() {
 // Corrige orientación EXIF de un dataURL — solo se usa al generar el PDF
 // Safari embebe el flag EXIF pero jsPDF no lo respeta, por eso las fotos
 // tomadas en vertical aparecen rotadas en el informe.
+// Corrige orientación EXIF antes de insertar en jsPDF (ningún navegador lo hace automáticamente).
+// Opera sobre el dataURL almacenado: decodifica suficientes bytes base64 para leer
+// el segmento APP1/EXIF, extrae la etiqueta 0x0112 (Orientation) y redibuja en canvas.
 function fixOrientationForPDF(dataUrl) {
-  return new Promise(resolve => {
-    // Extraer bytes EXIF desde el dataURL
+  return new Promise(function(resolve) {
+
     function getOrientation(dataUrl) {
       try {
-        const base64 = dataUrl.split(',')[1];
-        const bin = atob(base64.substring(0, 512)); // solo necesitamos el encabezado
+        var b64 = dataUrl.split(',')[1];
+        // Decodificar los primeros 65 536 bytes en base64 (~87 380 caracteres)
+        // para garantizar que el bloque EXIF quede dentro del buffer.
+        var maxChars = Math.min(b64.length, 87380);
+        var bin = atob(b64.substring(0, maxChars));
+        var len = bin.length;
+
+        // Debe comenzar con el marcador SOI de JPEG
         if (bin.charCodeAt(0) !== 0xFF || bin.charCodeAt(1) !== 0xD8) return 1;
-        let i = 2;
-        while (i < bin.length) {
+
+        var i = 2;
+        while (i + 3 < len) {
           if (bin.charCodeAt(i) !== 0xFF) break;
-          const marker = bin.charCodeAt(i + 1);
-          const len = (bin.charCodeAt(i + 2) << 8) | bin.charCodeAt(i + 3);
-          if (marker === 0xE1) { // APP1 = EXIF
+          var marker = bin.charCodeAt(i + 1);
+          var segLen  = (bin.charCodeAt(i + 2) << 8) | bin.charCodeAt(i + 3);
+
+          if (marker === 0xE1) { // APP1 — aquí vive EXIF
+            // Los 4 bytes siguientes al marcador+longitud deben ser "Exif"
             if (bin.substring(i + 4, i + 8) !== 'Exif') return 1;
-            const little = bin.charCodeAt(i + 10) === 0x49;
-            function r16(o) {
-              o += i + 10;
-              return little
-                ? (bin.charCodeAt(o) | (bin.charCodeAt(o+1) << 8))
-                : ((bin.charCodeAt(o) << 8) | bin.charCodeAt(o+1));
+            // Byte order: 0x4949 = little-endian, 0x4D4D = big-endian
+            var tiff   = i + 10; // inicio del bloque TIFF
+            var little = (bin.charCodeAt(tiff) === 0x49);
+
+            function read16(off) {
+              var a = bin.charCodeAt(tiff + off), b = bin.charCodeAt(tiff + off + 1);
+              return little ? (a | (b << 8)) : ((a << 8) | b);
             }
-            const ifdOff = little
-              ? (bin.charCodeAt(i+14) | (bin.charCodeAt(i+15)<<8) | (bin.charCodeAt(i+16)<<16) | (bin.charCodeAt(i+17)<<24))
-              : ((bin.charCodeAt(i+14)<<24) | (bin.charCodeAt(i+15)<<16) | (bin.charCodeAt(i+16)<<8) | bin.charCodeAt(i+17));
-            const entries = r16(4 + ifdOff);
-            for (let e = 0; e < entries; e++) {
-              const tag = r16(4 + ifdOff + 2 + e * 12);
-              if (tag === 0x0112) return r16(4 + ifdOff + 2 + e * 12 + 8);
+            function read32(off) {
+              var a = bin.charCodeAt(tiff + off),
+                  b = bin.charCodeAt(tiff + off + 1),
+                  c = bin.charCodeAt(tiff + off + 2),
+                  d = bin.charCodeAt(tiff + off + 3);
+              return little
+                ? (a | (b << 8) | (c << 16) | (d << 24))
+                : ((a << 24) | (b << 16) | (c << 8) | d);
+            }
+
+            var ifdOffset = read32(4);
+            var entries   = read16(ifdOffset);
+            for (var e = 0; e < entries; e++) {
+              var tag = read16(ifdOffset + 2 + e * 12);
+              if (tag === 0x0112) { // Orientation
+                return read16(ifdOffset + 2 + e * 12 + 8);
+              }
             }
             return 1;
           }
-          i += 2 + len;
+
+          // Saltar al siguiente segmento (2 bytes del marcador + longitud del segmento)
+          i += 2 + segLen;
         }
-      } catch(e) {}
+      } catch(err) {}
       return 1;
     }
 
-    const orientation = getOrientation(dataUrl);
+    var orientation = getOrientation(dataUrl);
+
+    // Si la orientación es normal o no se pudo leer, devolver el dataURL sin cambios
     if (orientation <= 1) { resolve(dataUrl); return; }
 
-    const img = new Image();
+    var img = new Image();
     img.onload = function() {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (orientation >= 5) { canvas.width = img.height; canvas.height = img.width; }
-      else                  { canvas.width = img.width;  canvas.height = img.height; }
+      var canvas = document.createElement('canvas');
+      var ctx    = canvas.getContext('2d');
+
+      // Las orientaciones 5-8 implican una transposición (giro de 90/270°)
+      if (orientation >= 5) {
+        canvas.width  = img.naturalHeight;
+        canvas.height = img.naturalWidth;
+      } else {
+        canvas.width  = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+      }
+
       switch (orientation) {
-        case 2: ctx.transform(-1,  0,  0,  1, img.width,  0); break;
-        case 3: ctx.transform(-1,  0,  0, -1, img.width,  img.height); break;
-        case 4: ctx.transform( 1,  0,  0, -1, 0,          img.height); break;
-        case 5: ctx.transform( 0,  1,  1,  0, 0,          0); break;
-        case 6: ctx.transform( 0,  1, -1,  0, img.height, 0); break;
-        case 7: ctx.transform( 0, -1, -1,  0, img.height, img.width); break;
-        case 8: ctx.transform( 0, -1,  1,  0, 0,          img.width); break;
+        case 2: ctx.transform(-1,  0,  0,  1, img.naturalWidth,  0); break;
+        case 3: ctx.transform(-1,  0,  0, -1, img.naturalWidth,  img.naturalHeight); break;
+        case 4: ctx.transform( 1,  0,  0, -1, 0,                 img.naturalHeight); break;
+        case 5: ctx.transform( 0,  1,  1,  0, 0,                 0); break;
+        case 6: ctx.transform( 0,  1, -1,  0, img.naturalHeight, 0); break;
+        case 7: ctx.transform( 0, -1, -1,  0, img.naturalHeight, img.naturalWidth); break;
+        case 8: ctx.transform( 0, -1,  1,  0, 0,                 img.naturalWidth); break;
       }
       ctx.drawImage(img, 0, 0);
       resolve(canvas.toDataURL('image/jpeg', 0.92));
     };
-    img.onerror = () => resolve(dataUrl);
+    img.onerror = function() { resolve(dataUrl); };
     img.src = dataUrl;
   });
 }
@@ -1896,6 +1931,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 </script>
 </body>
 </html>
+
 
 
 
